@@ -1,9 +1,12 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import Login from './pages/Login';
-import StudentDashboard from './pages/StudentDashboard';
-import FacultyDashboard from './pages/FacultyDashboard';
-import AdminDashboard from './pages/AdminDashboard';
-import ProtectedRoute from './components/ProtectedRoute';
+import { Routes, Route, Navigate } from "react-router-dom";
+import Login from "./pages/Login";
+import StudentDashboard from "./pages/StudentDashboard";
+import FacultyDashboard from "./pages/FacultyDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
+import AdminUsers from "./pages/admin_subpages/AdminUsers";
+import Dashboard from "./pages/admin_subpages/Dashboard";
+import AdminLayout from "./pages/AdminLayout";
 
 export default function App() {
   return (
@@ -36,10 +39,15 @@ export default function App() {
         path="/admin"
         element={
           <ProtectedRoute role="admin">
-            <AdminDashboard />
+            <AdminLayout />
           </ProtectedRoute>
         }
-      />
+      >
+        <Route index element={<AdminDashboard />} />
+        <Route path="users" element={<AdminUsers />} />
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="users" element={<AdminUsers />} />
+      </Route>
 
       {/* fallback */}
       <Route path="*" element={<div>404 — Page not found</div>} />
