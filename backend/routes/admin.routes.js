@@ -8,5 +8,7 @@ router.get('/logs', auth, requireRole(['admin']), adminCtrl.getLogs);
 router.post('/import-users', auth, requireRole(['admin']), adminCtrl.importUsers);
 router.get('/reports', auth, requireRole(['admin']), adminCtrl.getReports);
 router.post('/create-user',auth,requireRole(['admin']),adminCtrl.createUser);
+router.get('/users',auth,requireRole(['admin']),adminCtrl.getUsers);
 
 module.exports = router;
+    

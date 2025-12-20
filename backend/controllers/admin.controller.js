@@ -89,3 +89,15 @@ exports.createUser = async (req, res) => {
     res.status(500).json({ msg: 'Server error' });
   }
 };
+exports.getUsers = async (req, res) => {
+  try {
+    const users = await User.find()
+      .select('-passwordHash') // never send password hashes
+      .sort({ createdAt: 1 });
+
+    res.json(users);
+  } catch (err) {
+    console.error('admin.getUsers', err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};

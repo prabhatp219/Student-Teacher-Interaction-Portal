@@ -194,3 +194,129 @@ body,
   transform: translateY(-2px);
   box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5);
 }
+
+
+/* admin-user page css */
+.users-page {
+  padding: 30px;
+}
+
+/* side-by-side layout */
+.users-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* card look */
+.users-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.users-card h2 {
+  margin-bottom: 16px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* table styling */
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.users-table th {
+  text-align: left;
+  padding: 12px;
+  background: #f0f2f5;
+  color: #555;
+  font-weight: 600;
+}
+
+.users-table td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  color: #333;
+}
+
+/* row hover */
+.users-table tbody tr:hover {
+  background: #f9fafc;
+}
+
+/* empty state */
+.users-card p {
+  color: #777;
+  font-size: 14px;
+}
+
+/* options -users */
+
+.actions-cell {
+  position: relative;
+}
+
+/* Options button */
+.options-btn {
+  background: #f5f7fa;
+  border: 1px solid #dcdfe6;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: black;
+}
+
+.options-btn:hover {
+  background: #eef1f5;
+}
+
+.arrow {
+  font-size: 10px;
+}
+
+/* dropdown menu */
+.options-menu {
+  position: absolute;
+  top: 36px;
+  left: 0;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  width: 130px;
+  z-index: 20;
+  overflow: hidden;
+}
+
+/* menu items */
+.menu-item {
+  width: 100%;
+  padding: 10px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+  color: black;
+}
+
+.menu-item:hover {
+  background: #f5f7fa;
+}
+
+/* delete styling */
+.menu-item.danger {
+  color: #d9534f;
+}
+
+.menu-item.danger:hover {
+  background: #fdecea;
+}
