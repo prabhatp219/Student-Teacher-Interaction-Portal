@@ -89,7 +89,7 @@ export default function AdminDashboard() {
             className="eye-icon"
             onClick={() => setShowPassword(!showPassword)}
           >
-            {showPassword ? "👁️" : "🙈"}
+            {showPassword ? "🙉" : "🙈"}
           </span>
         </div>
 

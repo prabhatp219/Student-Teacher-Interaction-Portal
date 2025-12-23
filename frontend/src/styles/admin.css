@@ -16,11 +16,12 @@ body,
   display: flex;
   min-height: 100vh;
   width: 100%;
+  overflow: hidden;
 }
 
 /* SIDEBAR */
 .sidebar {
-  width: 280px;
+  width: 200px;
   background: linear-gradient(180deg, #1e3a5f 0%, #0f1c2e 100%);
   padding: 30px 0;
   box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
@@ -108,8 +109,8 @@ body,
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 40px;
+  /* align-items: center; */
+  padding: 8px;
 }
 
 /* FORM */
@@ -195,10 +196,10 @@ body,
   box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5);
 }
 
-
 /* admin-user page css */
 .users-page {
-  padding: 30px;
+  padding: 10px;
+  display: flex;
 }
 
 /* side-by-side layout */
@@ -214,6 +215,10 @@ body,
   border-radius: 14px;
   padding: 20px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  height: fit-content; /* Add this */
 }
 
 .users-card h2 {
@@ -223,11 +228,17 @@ body,
   color: #333;
 }
 
+/* table wrapper to handle overflow */
+.users-table-wrapper {
+  /* overflow-x: auto; */
+}
+
 /* table styling */
 .users-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
+  table-layout: auto; /* Changed from fixed to auto */
 }
 
 .users-table th {
@@ -236,6 +247,34 @@ body,
   background: #f0f2f5;
   color: #555;
   font-weight: 600;
+  white-space: nowrap; /* Prevent header text wrapping */
+}
+
+/* Set specific widths for each column */
+.users-table th:nth-child(1),
+.users-table td:nth-child(1) {
+  width: 15%; /* Name */
+}
+
+.users-table th:nth-child(2),
+.users-table td:nth-child(2) {
+  width: 30%; /* Email - wider column */
+  word-break: break-word; /* Allow email to wrap if needed */
+}
+
+.users-table th:nth-child(3),
+.users-table td:nth-child(3) {
+  width: 12%; /* Role */
+}
+
+.users-table th:nth-child(4),
+.users-table td:nth-child(4) {
+  width: 15%; /* Created */
+}
+
+.users-table th:nth-child(5),
+.users-table td:nth-child(5) {
+  width: 18%; /* Actions */
 }
 
 .users-table td {
@@ -256,9 +295,9 @@ body,
 }
 
 /* options -users */
-
 .actions-cell {
   position: relative;
+  overflow: visible;
 }
 
 /* Options button */
@@ -283,11 +322,42 @@ body,
   font-size: 10px;
 }
 
+/* make table header fixed */
+.users-table thead {
+  display: table;
+  width: 100%;
+  table-layout: auto; /* Changed from fixed to auto */
+}
+
+/* scroll only rows */
+.table-body-scroll {
+  max-height: 413px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* tables stay normal */
+.table-body-scroll .users-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto; /* Changed from fixed to auto */
+}
+
+/* scrollbar polish (optional) */
+.table-body-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.table-body-scroll::-webkit-scrollbar-thumb {
+  background: #c7cbe0;
+  border-radius: 10px;
+}
+
 /* dropdown menu */
 .options-menu {
   position: absolute;
   top: 36px;
-  left: 0;
+  right: 0;
   background: #ffffff;
   border-radius: 8px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
@@ -319,4 +389,112 @@ body,
 
 .menu-item.danger:hover {
   background: #fdecea;
+} 
+
+
+/* SEARCH FILTER CSS */
+
+
+
+/* User section wrapper */
+.user-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Search and Filter Container */
+.search-filter-container {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Search Box */
+.search-box {
+  position: relative;
+  flex: 1;
+  min-width: 250px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 40px 10px 12px;
+  border: 1px solid #dcdfe6;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #333;
+  background: #f9fafc;
+  transition: all 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #7c5cdb;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(124, 92, 219, 0.1);
+}
+
+.search-input::placeholder {
+  color: #999;
+}
+
+.search-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 16px;
+  opacity: 0.5;
+}
+
+/* Results Count */
+.results-count {
+  font-size: 13px;
+  color: #666;
+  padding: 10px 14px;
+  background: #f0f2f5;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+/* No Results Message */
+.no-results {
+  color: #777;
+  font-size: 14px;
+  text-align: center;
+  padding: 40px 20px;
+  background: #f9fafc;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+/* Adjust card to accommodate search */
+.users-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  min-height: 608px;
+}
+
+/* Make table wrapper fill remaining space */
+.users-table-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin-top: 8px;
+}
+
+/* Adjust scroll area */
+.table-body-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 300px;
 }
