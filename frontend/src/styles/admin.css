@@ -228,11 +228,6 @@ body,
   color: #333;
 }
 
-/* table wrapper to handle overflow */
-.users-table-wrapper {
-  /* overflow-x: auto; */
-}
-
 /* table styling */
 .users-table {
   width: 100%;
