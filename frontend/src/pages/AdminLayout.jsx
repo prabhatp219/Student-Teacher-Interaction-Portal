@@ -11,7 +11,7 @@ export default function AdminLayout() {
 
       <main className="main-content">
         <AdminHeader />
-        <div className="content-area">
+        <div className="content-area ">
           <Outlet />
         </div>
       </main>

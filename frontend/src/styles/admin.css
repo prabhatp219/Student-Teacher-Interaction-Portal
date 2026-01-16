@@ -120,6 +120,15 @@ body,
   padding: 40px;
   border-radius: 20px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  height: 50px;
+}
+ .form-container-1{   /*this is css for the create user page */
+  width: 500px;
+  background: rgba(255,255,255,0.95);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  height: 500px;
 }
 
 .form-title {

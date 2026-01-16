@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import { api } from "../../utils/api";
 import UserTable from "../../components/UserTable";
 import "../../styles/admin.css";
@@ -14,29 +14,39 @@ export default function AdminUsers() {
 
   const fetchUsers = async () => {
     try {
-      const res = await api.get('/admin/users');
+      const res = await api.get("/admin/users");
       const users = res.data;
 
-      setStudents(users.filter(u => u.role === 'student'));
-      setFaculty(users.filter(u => u.role === 'faculty'));
+      setStudents(users.filter((u) => u.role === "student"));
+      setFaculty(users.filter((u) => u.role === "faculty"));
     } catch (err) {
-      console.error(err);
+      console.error("Failed to fetch users", err);
     } finally {
       setLoading(false);
     }
   };
 
-  // UI handlers (logic later)
-  const handleDisable = (user) => {
-    if (!window.confirm(`Disable ${user.name}?`)) return;
-    console.log("Disable user:", user);
-    // later: api.patch(`/admin/users/${user._id}/disable`)
+  // handlers now accept ID (matches UserTable)
+  const handleDelete = async (userId) => {
+    if (!window.confirm("Delete this user? This cannot be undone.")) return;
+
+    try {
+      await api.delete(`/admin/users/${userId}`);
+      fetchUsers();
+    } catch (err) {
+      console.error(err.response?.data || err.message);
+    }
   };
 
-  const handleDelete = (user) => {
-    if (!window.confirm(`Delete ${user.name}? This cannot be undone.`)) return;
-    console.log("Delete user:", user);
-    // later: api.delete(`/admin/users/${user._id}`)
+  const handleDisable = async (userId) => {
+    if (!window.confirm("Disable this user?")) return;
+
+    try {
+      await api.patch(`/admin/users/${userId}/disable`);
+      fetchUsers();
+    } catch (err) {
+      console.error(err.response?.data || err.message);
+    }
   };
 
   if (loading) return <p>Loading users...</p>;

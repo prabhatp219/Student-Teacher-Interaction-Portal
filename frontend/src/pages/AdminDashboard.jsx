@@ -49,7 +49,7 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="form-container">
+    <div className="form-container form-container-1">
       <h2 className="form-title">Create New User</h2>
 
       <form onSubmit={handleSubmit}>

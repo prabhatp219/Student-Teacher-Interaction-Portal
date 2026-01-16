@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
+import StudentLayout from "./pages/StudentLayout";
 import StudentDashboard from "./pages/StudentDashboard";
 import FacultyDashboard from "./pages/FacultyDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -18,11 +19,13 @@ export default function App() {
       <Route
         path="/student"
         element={
-          <ProtectedRoute role="student">
-            <StudentDashboard />
+          <ProtectedRoute>
+            <StudentLayout />
           </ProtectedRoute>
         }
-      />
+      >
+        <Route index element={<StudentDashboard />} />
+      </Route>
 
       {/* Faculty */}
       <Route
