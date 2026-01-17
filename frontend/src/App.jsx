@@ -6,6 +6,7 @@ import FacultyDashboard from "./pages/FacultyDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminUsers from "./pages/admin_subpages/AdminUsers";
+import AdminCourses from "./pages/admin_subpages/AdminCourses";
 import Dashboard from "./pages/admin_subpages/Dashboard";
 import AdminLayout from "./pages/AdminLayout";
 
@@ -50,6 +51,7 @@ export default function App() {
         <Route path="users" element={<AdminUsers />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="users" element={<AdminUsers />} />
+        <Route path="courses" element={<AdminCourses />} />
       </Route>
 
       {/* fallback */}
