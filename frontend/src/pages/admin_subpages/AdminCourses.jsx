@@ -14,21 +14,39 @@ const AdminCourses = () => {
   const [faculty, setFaculty] = useState([]);
   const [students, setStudents] = useState([]);
   const [form, setForm] = useState(emptyForm);
-  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [editCourse, setEditCourse] = useState(null);
+
+  // for remove dropdowns (per course)
+  const [removeFaculty, setRemoveFaculty] = useState({});
+  const [removeStudent, setRemoveStudent] = useState({});
+
   const [loading, setLoading] = useState(true);
 
   // ---------------- FETCH ----------------
   const fetchCourses = async () => {
-    const res = await api.get("/admin/courses");
-    setCourses(res.data);
-    setLoading(false);
+    try {
+      const res = await api.get("/courses");
+      setCourses(res.data.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const fetchUsers = async () => {
     const f = await api.get("/admin/users?role=faculty");
     const s = await api.get("/admin/users?role=student");
-    setFaculty(f.data.data || f.data);
-    setStudents(s.data.data || s.data);
+
+    const facultyOnly = (f.data.data || f.data).filter(
+      (u) => u.role === "faculty"
+    );
+    const studentOnly = (s.data.data || s.data).filter(
+      (u) => u.role === "student"
+    );
+
+    setFaculty(facultyOnly);
+    setStudents(studentOnly);
   };
 
   useEffect(() => {
@@ -40,33 +58,51 @@ const AdminCourses = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (selectedCourse) {
-        await api.put(`/admin/courses/${selectedCourse._id}`, form);
+      if (editCourse) {
+        await api.put(`/courses/${editCourse._id}`, form);
       } else {
-        await api.post("/admin/courses", form);
+        await api.post("/courses", form);
       }
       setForm(emptyForm);
-      setSelectedCourse(null);
+      setEditCourse(null);
       fetchCourses();
     } catch {
       alert("Failed to save course");
     }
   };
 
-  // ---------------- ASSIGN USERS ----------------
-  const handleAssign = async () => {
-    await api.patch(`/admin/courses/${selectedCourse._id}/assign`, {
-      faculty: selectedCourse.faculty,
-      students: selectedCourse.students,
-    });
+  // ---------------- ADD (INCREMENTAL) ----------------
+  const handleAddFaculty = async (courseId, facultyId) => {
+    if (!facultyId) return;
+    await api.post(`/courses/${courseId}/add-faculty`, { facultyId });
     fetchCourses();
-    setSelectedCourse(null);
   };
 
-  // ---------------- DELETE ----------------
+  const handleAddStudent = async (courseId, studentId) => {
+    if (!studentId) return;
+    await api.post(`/courses/${courseId}/add-student`, { studentId });
+    fetchCourses();
+  };
+
+  // ---------------- REMOVE ----------------
+  const handleRemoveFaculty = async (courseId, facultyId) => {
+    if (!facultyId) return;
+    await api.post(`/courses/${courseId}/remove-faculty`, { facultyId });
+    setRemoveFaculty({ ...removeFaculty, [courseId]: "" });
+    fetchCourses();
+  };
+
+  const handleRemoveStudent = async (courseId, studentId) => {
+    if (!studentId) return;
+    await api.post(`/courses/${courseId}/remove-student`, { studentId });
+    setRemoveStudent({ ...removeStudent, [courseId]: "" });
+    fetchCourses();
+  };
+
+  // ---------------- DELETE COURSE ----------------
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this course?")) return;
-    await api.delete(`/admin/courses/${id}`);
+    await api.delete(`/courses/${id}`);
     fetchCourses();
   };
 
@@ -78,26 +114,45 @@ const AdminCourses = () => {
 
       {/* CREATE / EDIT FORM */}
       <form onSubmit={handleSubmit} style={{ marginBottom: 20 }}>
-        <h4>{selectedCourse ? "Edit Course" : "Add Course"}</h4>
+        <h4>{editCourse ? "Edit Course" : "Add Course"}</h4>
 
-        <input placeholder="Code" value={form.code}
-          onChange={(e) => setForm({ ...form, code: e.target.value })} required />
+        <input
+          placeholder="Code"
+          value={form.code}
+          onChange={(e) => setForm({ ...form, code: e.target.value })}
+          required
+        />
 
-        <input placeholder="Title" value={form.title}
-          onChange={(e) => setForm({ ...form, title: e.target.value })} required />
+        <input
+          placeholder="Title"
+          value={form.title}
+          onChange={(e) => setForm({ ...form, title: e.target.value })}
+          required
+        />
 
-        <input placeholder="Department" value={form.department}
-          onChange={(e) => setForm({ ...form, department: e.target.value })} />
+        <input
+          placeholder="Department"
+          value={form.department}
+          onChange={(e) => setForm({ ...form, department: e.target.value })}
+        />
 
-        <input type="number" placeholder="Semester" value={form.semester}
-          onChange={(e) => setForm({ ...form, semester: e.target.value })} />
+        <input
+          type="number"
+          placeholder="Semester"
+          value={form.semester}
+          onChange={(e) =>
+            setForm({ ...form, semester: Number(e.target.value) })
+          }
+        />
 
-        <textarea placeholder="Description"
+        <textarea
+          placeholder="Description"
           value={form.description}
-          onChange={(e) => setForm({ ...form, description: e.target.value })} />
+          onChange={(e) => setForm({ ...form, description: e.target.value })}
+        />
 
         <button type="submit">
-          {selectedCourse ? "Update Course" : "Create Course"}
+          {editCourse ? "Update Course" : "Create Course"}
         </button>
       </form>
 
@@ -119,66 +174,104 @@ const AdminCourses = () => {
             <tr key={c._id}>
               <td>{c.code}</td>
               <td>{c.title}</td>
+
+              {/* COUNT ONLY */}
               <td>{c.faculty?.length || 0}</td>
               <td>{c.students?.length || 0}</td>
+
               <td>{c.isActive ? "Active" : "Inactive"}</td>
+
+              {/* ACTIONS */}
               <td>
-                <button onClick={() => {
-                  setSelectedCourse(c);
-                  setForm(c);
-                }}>Edit</button>
+                <div style={{ marginBottom: 6 }}>
+                  <button
+                    onClick={() => {
+                      setEditCourse(c);
+                      setForm({
+                        code: c.code,
+                        title: c.title,
+                        department: c.department,
+                        semester: c.semester,
+                        description: c.description,
+                      });
+                    }}
+                  >
+                    Edit
+                  </button>
 
-                <button onClick={() => setSelectedCourse(c)}>
-                  Assign
-                </button>
+                  <button onClick={() => handleDelete(c._id)}>Delete</button>
+                </div>
 
-                <button onClick={() => handleDelete(c._id)}>
-                  Delete
-                </button>
+                {/* ADD FACULTY */}
+                <div>
+                  <select
+                    onChange={(e) => handleAddFaculty(c._id, e.target.value)}
+                  >
+                    <option value="">Add faculty</option>
+                    {faculty.map((f) => (
+                      <option key={f._id} value={f._id}>
+                        {f.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* REMOVE FACULTY */}
+                <div>
+                  <select
+                    value=""
+                    onChange={(e) => {
+                      const facultyId = e.target.value;
+                      if (!facultyId) return;
+                      handleRemoveFaculty(c._id, facultyId);
+                    }}
+                  >
+                    <option value="">Remove faculty</option>
+                    {c.faculty.map((f) => (
+                      <option key={f._id || f} value={f._id || f}>
+                        {f.name || f}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* ADD STUDENT */}
+                <div>
+                  <select
+                    onChange={(e) => handleAddStudent(c._id, e.target.value)}
+                  >
+                    <option value="">Add student</option>
+                    {students.map((s) => (
+                      <option key={s._id} value={s._id}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* REMOVE STUDENT */}
+                <div>
+                  <select
+                    defaultValue=""
+                    onChange={(e) => {
+                      const studentId = e.target.value;
+                      if (!studentId) return;
+                      handleRemoveStudent(c._id, studentId);
+                    }}
+                  >
+                    <option value="">Remove student</option>
+                    {c.students.map((s) => (
+                      <option key={s._id || s} value={s._id || s}>
+                        {s.name || s.name.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-
-      {/* ASSIGN MODAL */}
-      {selectedCourse && (
-        <div style={{ marginTop: 20 }}>
-          <h4>Assign Users – {selectedCourse.title}</h4>
-
-          <label>Faculty</label>
-          <select
-            multiple
-            value={selectedCourse.faculty}
-            onChange={(e) =>
-              setSelectedCourse({
-                ...selectedCourse,
-                faculty: [...e.target.selectedOptions].map(o => o.value),
-              })
-            }>
-            {faculty.map(f => (
-              <option key={f._id} value={f._id}>{f.name}</option>
-            ))}
-          </select>
-
-          <label>Students</label>
-          <select
-            multiple
-            value={selectedCourse.students}
-            onChange={(e) =>
-              setSelectedCourse({
-                ...selectedCourse,
-                students: [...e.target.selectedOptions].map(o => o.value),
-              })
-            }>
-            {students.map(s => (
-              <option key={s._id} value={s._id}>{s.name}</option>
-            ))}
-          </select>
-
-          <button onClick={handleAssign}>Save Assignments</button>
-        </div>
-      )}
     </div>
   );
 };

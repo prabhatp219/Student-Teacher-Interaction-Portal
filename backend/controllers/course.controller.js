@@ -5,16 +5,31 @@ exports.listCourses = async (req, res) => {
   try {
     const { page = 1, limit = 25, q } = req.query;
     const skip = (Number(page) - 1) * Number(limit);
+
     const filter = {};
-    if (q) filter.$or = [{ title: { $regex: q, $options: 'i' } }, { code: { $regex: q, $options: 'i' } }];
-    const courses = await Course.find(filter).skip(skip).limit(Number(limit)).sort({ createdAt: -1 }).populate('faculty','name email');
+    if (q) {
+      filter.$or = [
+        { title: { $regex: q, $options: 'i' } },
+        { code: { $regex: q, $options: 'i' } }
+      ];
+    }
+
+    const courses = await Course.find(filter)
+      .skip(skip)
+      .limit(Number(limit))
+      .sort({ createdAt: -1 })
+      .populate('faculty', 'name email')
+      .populate('students', 'name email');
+
     const total = await Course.countDocuments(filter);
+
     res.json({ data: courses, total });
   } catch (err) {
     console.error('course.listCourses', err);
     res.status(500).json({ msg: 'Server error' });
   }
 };
+
 
 exports.getCourse = async (req, res) => {
   try {
@@ -112,6 +127,57 @@ exports.removeStudent = async (req, res) => {
     res.json({ msg: 'Removed' });
   } catch (err) {
     console.error('course.removeStudent', err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
+  exports.addFaculty = async (req, res) => {
+    const { facultyId } = req.body;
+
+    const course = await Course.findById(req.params.id);
+    if (!course) return res.status(404).json({ msg: "Course not found" });
+
+    if (!course.faculty.includes(facultyId)) {
+      course.faculty.push(facultyId);
+      await course.save();
+    }
+
+    res.json(course);
+  };
+
+  exports.removeFaculty = async (req, res) => {
+    const { facultyId } = req.body;
+
+    const course = await Course.findById(req.params.id);
+    if (!course) return res.status(404).json({ msg: "Course not found" });
+
+    course.faculty = course.faculty.filter(
+      f => f.toString() !== facultyId
+    );
+    await course.save();
+
+    res.json(course);
+  };
+
+
+exports.assignUsers = async (req, res) => {
+  try {
+    const { faculty = [], students = [] } = req.body;
+
+    const course = await Course.findByIdAndUpdate(
+      req.params.id,
+      { faculty, students },
+      { new: true }
+    )
+      .populate('faculty', 'name email')
+      .populate('students', 'name email');
+
+    if (!course) {
+      return res.status(404).json({ msg: 'Course not found' });
+    }
+
+    res.json(course);
+  } catch (err) {
+    console.error('course.assignUsers', err);
     res.status(500).json({ msg: 'Server error' });
   }
 };

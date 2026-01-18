@@ -19,5 +19,17 @@ router.post('/:id/unenroll', auth, courseCtrl.unenrollSelf);
 // optional: manage students in course (faculty/admin)
 router.post('/:id/add-student', auth, requireRole(['faculty','admin']), courseCtrl.addStudent);
 router.post('/:id/remove-student', auth, requireRole(['faculty','admin']), courseCtrl.removeStudent);
+//faculty route for course 
+router.post('/:id/add-faculty', auth, requireRole(['admin']), courseCtrl.addFaculty);
+router.post('/:id/remove-faculty', auth, requireRole(['admin']), courseCtrl.removeFaculty);
+
+
+router.patch(
+  '/:id/assign',
+  auth,
+  requireRole(['admin']),
+  courseCtrl.assignUsers
+);
+
 
 module.exports = router;
