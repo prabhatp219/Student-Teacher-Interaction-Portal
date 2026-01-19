@@ -21,6 +21,14 @@ try { router.use('/chats', require('./chat.routes')); } catch (e) {}
 try { router.use('/messages', require('./message.routes')); } catch (e) {}
 try { router.use('/notifications', require('./notification.routes')); } catch (e) {}
 try { router.use('/admin', require('./admin.routes')); } catch (e) {}
+try {
+  router.use("/student", require("./student.routes"));
+  console.log("✅ student routes loaded");
+} catch (e) {
+  console.error("❌ student routes failed:", e.message);
+}
+
+
 
 // Default fallback so /api/v1 responds with something useful
 router.get('/', (req, res) => {

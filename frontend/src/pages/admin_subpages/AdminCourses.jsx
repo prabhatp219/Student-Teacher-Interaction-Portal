@@ -39,10 +39,10 @@ const AdminCourses = () => {
     const s = await api.get("/admin/users?role=student");
 
     const facultyOnly = (f.data.data || f.data).filter(
-      (u) => u.role === "faculty"
+      (u) => u.role === "faculty",
     );
     const studentOnly = (s.data.data || s.data).filter(
-      (u) => u.role === "student"
+      (u) => u.role === "student",
     );
 
     setFaculty(facultyOnly);
@@ -107,6 +107,23 @@ const AdminCourses = () => {
   };
 
   if (loading) return <p>Loading courses...</p>;
+
+  ///////////
+  const getAvailableFaculty = (course) => {
+    const assignedIds = (course.faculty || []).map((f) =>
+      typeof f === "string" ? f : f._id,
+    );
+
+    return faculty.filter((f) => !assignedIds.includes(f._id));
+  };
+
+  const getAvailableStudents = (course) => {
+    const assignedIds = (course.students || []).map((s) =>
+      typeof s === "string" ? s : s._id,
+    );
+
+    return students.filter((s) => !assignedIds.includes(s._id));
+  };
 
   return (
     <div style={{ padding: 24 }}>
@@ -208,7 +225,7 @@ const AdminCourses = () => {
                     onChange={(e) => handleAddFaculty(c._id, e.target.value)}
                   >
                     <option value="">Add faculty</option>
-                    {faculty.map((f) => (
+                    {getAvailableFaculty(c).map((f) => (
                       <option key={f._id} value={f._id}>
                         {f.name}
                       </option>
@@ -241,7 +258,7 @@ const AdminCourses = () => {
                     onChange={(e) => handleAddStudent(c._id, e.target.value)}
                   >
                     <option value="">Add student</option>
-                    {students.map((s) => (
+                    {getAvailableStudents(c).map((s) => (
                       <option key={s._id} value={s._id}>
                         {s.name}
                       </option>
