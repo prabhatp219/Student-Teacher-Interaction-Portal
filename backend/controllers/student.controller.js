@@ -21,6 +21,7 @@ const getStudentDashboard = async (req, res) => {
       course: { $in: courseIds },
       status: "published",
     });
+    //new changes
 
     // 3️⃣ Announcements relevant to student
     const student = await User.findById(studentId).select("department role");
