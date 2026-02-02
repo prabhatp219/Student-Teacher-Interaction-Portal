@@ -1,25 +1,68 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
+import "../styles/StudentDashboard.css";
 
 const StudentLayout = () => {
+  const location = useLocation();
+  const isActive = (path) => location.pathname === path;
+
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
-      {/* Sidebar */}
-      <aside style={{ width: "220px", background: "#1e293b", color: "white" }}>
-        <h3 style={{ padding: "16px" }}>Student Panel</h3>
-        <nav style={{ display: "flex", flexDirection: "column", gap: "10px", padding: "16px" }}>
-          <Link to="/student" style={{ color: "white" }}>Dashboard</Link>
-          <Link to="/student/courses" style={{ color: "white" }}>Courses</Link>
-          <Link to="/student/assignments" style={{ color: "white" }}>Assignments</Link>
-          <Link to="/student/profile" style={{ color: "white" }}>Profile</Link>
+    <div className="layout-wrapper">
+      <aside className="sidebar">
+        <div className="logo-container">
+          <div className="logo-icon">🎓</div>
+          <h2 className="logo-text">EduPortal</h2>
+        </div>
+
+        <nav className="nav-stack">
+          <NavLink 
+            to="/student" 
+            label="Dashboard" 
+            icon="📊" 
+            active={isActive("/student")} 
+          />
+          <NavLink 
+            to="/student/courses" 
+            label="My Courses" 
+            icon="📖" 
+            active={isActive("/student/courses")} 
+          />
+          <NavLink 
+            to="/student/assignments" 
+            label="Assignments" 
+            icon="✍️" 
+            active={isActive("/student/assignments")} 
+          />
+          <NavLink 
+            to="/student/profile" 
+            label="My Profile" 
+            icon="👤" 
+            active={isActive("/student/profile")} 
+          />
         </nav>
+
+        <div className="support-card">
+          <p className="support-text">Need help?</p>
+          <button className="support-btn">Contact Support</button>
+        </div>
       </aside>
 
-      {/* Main content */}
-      <main style={{ flex: 1, padding: "20px" }}>
-        <Outlet />
+      <main className="main-content-area">
+        <div className="content-inner">
+          <Outlet />
+        </div>
       </main>
     </div>
   );
 };
+
+const NavLink = ({ to, label, icon, active }) => (
+  <Link 
+    to={to} 
+    className={`nav-link ${active ? 'active' : ''}`}
+  >
+    <span className="nav-icon">{icon}</span>
+    {label}
+  </Link>
+);
 
 export default StudentLayout;
