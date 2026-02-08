@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../../utils/api";
-
+import "../../styles/admin_course.css";
 const emptyForm = {
   code: "",
   title: "",
@@ -126,169 +126,181 @@ const AdminCourses = () => {
   };
 
   return (
-    <div style={{ padding: 24 }}>
-      <h2>📘 Admin – Course Management</h2>
+    <div className="adm-crs-container">
+      <h2 className="adm-crs-title">📘 Admin – Course Management</h2>
 
       {/* CREATE / EDIT FORM */}
-      <form onSubmit={handleSubmit} style={{ marginBottom: 20 }}>
-        <h4>{editCourse ? "Edit Course" : "Add Course"}</h4>
-
-        <input
-          placeholder="Code"
-          value={form.code}
-          onChange={(e) => setForm({ ...form, code: e.target.value })}
-          required
-        />
-
-        <input
-          placeholder="Title"
-          value={form.title}
-          onChange={(e) => setForm({ ...form, title: e.target.value })}
-          required
-        />
-
-        <input
-          placeholder="Department"
-          value={form.department}
-          onChange={(e) => setForm({ ...form, department: e.target.value })}
-        />
-
-        <input
-          type="number"
-          placeholder="Semester"
-          value={form.semester}
-          onChange={(e) =>
-            setForm({ ...form, semester: Number(e.target.value) })
-          }
-        />
-
-        <textarea
-          placeholder="Description"
-          value={form.description}
-          onChange={(e) => setForm({ ...form, description: e.target.value })}
-        />
-
-        <button type="submit">
-          {editCourse ? "Update Course" : "Create Course"}
-        </button>
-      </form>
+      <div className="adm-crs-form-card">
+        <h4 className="adm-crs-form-header">
+          {editCourse ? "Edit Course" : "Add Course"}
+        </h4>
+        <form onSubmit={handleSubmit} className="adm-crs-form">
+          <div className="adm-crs-form-row">
+            <input
+              className="adm-crs-input"
+              placeholder="Code"
+              value={form.code}
+              onChange={(e) => setForm({ ...form, code: e.target.value })}
+              required
+            />
+            <input
+              className="adm-crs-input"
+              placeholder="Title"
+              value={form.title}
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              required
+            />
+            <input
+              className="adm-crs-input"
+              placeholder="Department"
+              value={form.department}
+              onChange={(e) => setForm({ ...form, department: e.target.value })}
+            />
+            <input
+              className="adm-crs-input"
+              type="number"
+              placeholder="Sem"
+              value={form.semester}
+              onChange={(e) =>
+                setForm({ ...form, semester: Number(e.target.value) })
+              }
+            />
+          </div>
+          <div className="adm-crs-form-row">
+            <textarea
+              className="adm-crs-textarea"
+              placeholder="Course Description..."
+              value={form.description}
+              onChange={(e) =>
+                setForm({ ...form, description: e.target.value })
+              }
+            />
+            <button type="submit" className="adm-crs-btn-primary">
+              {editCourse ? "Update Course" : "Create Course"}
+            </button>
+          </div>
+        </form>
+      </div>
 
       {/* COURSE TABLE */}
-      <table border="1" cellPadding="8" width="100%">
-        <thead>
-          <tr>
-            <th>Code</th>
-            <th>Title</th>
-            <th>Faculty</th>
-            <th>Students</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {courses.map((c) => (
-            <tr key={c._id}>
-              <td>{c.code}</td>
-              <td>{c.title}</td>
-
-              {/* COUNT ONLY */}
-              <td>{c.faculty?.length || 0}</td>
-              <td>{c.students?.length || 0}</td>
-
-              <td>{c.isActive ? "Active" : "Inactive"}</td>
-
-              {/* ACTIONS */}
-              <td>
-                <div style={{ marginBottom: 6 }}>
-                  <button
-                    onClick={() => {
-                      setEditCourse(c);
-                      setForm({
-                        code: c.code,
-                        title: c.title,
-                        department: c.department,
-                        semester: c.semester,
-                        description: c.description,
-                      });
-                    }}
-                  >
-                    Edit
-                  </button>
-
-                  <button onClick={() => handleDelete(c._id)}>Delete</button>
-                </div>
-
-                {/* ADD FACULTY */}
-                <div>
-                  <select
-                    onChange={(e) => handleAddFaculty(c._id, e.target.value)}
-                  >
-                    <option value="">Add faculty</option>
-                    {getAvailableFaculty(c).map((f) => (
-                      <option key={f._id} value={f._id}>
-                        {f.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* REMOVE FACULTY */}
-                <div>
-                  <select
-                    value=""
-                    onChange={(e) => {
-                      const facultyId = e.target.value;
-                      if (!facultyId) return;
-                      handleRemoveFaculty(c._id, facultyId);
-                    }}
-                  >
-                    <option value="">Remove faculty</option>
-                    {c.faculty.map((f) => (
-                      <option key={f._id || f} value={f._id || f}>
-                        {f.name || f}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* ADD STUDENT */}
-                <div>
-                  <select
-                    onChange={(e) => handleAddStudent(c._id, e.target.value)}
-                  >
-                    <option value="">Add student</option>
-                    {getAvailableStudents(c).map((s) => (
-                      <option key={s._id} value={s._id}>
-                        {s.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* REMOVE STUDENT */}
-                <div>
-                  <select
-                    defaultValue=""
-                    onChange={(e) => {
-                      const studentId = e.target.value;
-                      if (!studentId) return;
-                      handleRemoveStudent(c._id, studentId);
-                    }}
-                  >
-                    <option value="">Remove student</option>
-                    {c.students.map((s) => (
-                      <option key={s._id || s} value={s._id || s}>
-                        {s.name || s.name.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </td>
+      <div className="adm-crs-table-wrapper">
+        <table className="adm-crs-table">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Title</th>
+              <th>Faculty</th>
+              <th>Students</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {courses.map((c) => (
+              <tr key={c._id}>
+                <td className="adm-crs-code-cell">{c.code}</td>
+                <td>
+                  <strong>{c.title}</strong>
+                </td>
+                <td>
+                  <span className="adm-crs-badge-info">
+                    {c.faculty?.length || 0}
+                  </span>
+                </td>
+                <td>
+                  <span className="adm-crs-badge-info">
+                    {c.students?.length || 0}
+                  </span>
+                </td>
+                <td>
+                  <span
+                    className={`adm-crs-status ${c.isActive ? "active" : "inactive"}`}
+                  >
+                    {c.isActive ? "Active" : "Inactive"}
+                  </span>
+                </td>
+                <td className="adm-crs-actions-cell">
+                  <div className="adm-crs-action-group">
+                    <button
+                      className="adm-crs-btn-edit"
+                      onClick={() => {
+                        setEditCourse(c);
+                        setForm({
+                          code: c.code,
+                          title: c.title,
+                          department: c.department,
+                          semester: c.semester,
+                          description: c.description,
+                        });
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="adm-crs-btn-delete"
+                      onClick={() => handleDelete(c._id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                  <div className="adm-crs-select-grid">
+                    <select
+                      className="adm-crs-select add-f"
+                      onChange={(e) => handleAddFaculty(c._id, e.target.value)}
+                    >
+                      <option value="">+ Faculty</option>
+                      {getAvailableFaculty(c).map((f) => (
+                        <option key={f._id} value={f._id}>
+                          {f.name}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      className="adm-crs-select rem-f"
+                      value=""
+                      onChange={(e) =>
+                        handleRemoveFaculty(c._id, e.target.value)
+                      }
+                    >
+                      <option value="">- Faculty</option>
+                      {c.faculty.map((f) => (
+                        <option key={f._id || f} value={f._id || f}>
+                          {f.name || f}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      className="adm-crs-select add-s"
+                      onChange={(e) => handleAddStudent(c._id, e.target.value)}
+                    >
+                      <option value="">+ Student</option>
+                      {getAvailableStudents(c).map((s) => (
+                        <option key={s._id} value={s._id}>
+                          {s.name}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      className="adm-crs-select rem-s"
+                      defaultValue=""
+                      onChange={(e) =>
+                        handleRemoveStudent(c._id, e.target.value)
+                      }
+                    >
+                      <option value="">- Student</option>
+                      {c.students.map((s) => (
+                        <option key={s._id || s} value={s._id || s}>
+                          {s.name || "Student"}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

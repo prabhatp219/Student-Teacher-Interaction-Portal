@@ -1,0 +1,173 @@
+/* Container & Background */
+.adm-crs-container {
+    padding: 30px;
+    background-color: #f4f7f9;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.adm-crs-title {
+    color: #2c3e50;
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+    border-left: 5px solid #3498db;
+    padding-left: 15px;
+}
+
+/* Form Card Styles */
+.adm-crs-form-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+    border: 1px solid #e1e8ed;
+}
+
+.adm-crs-form-header {
+    margin-top: 0;
+    color: #34495e;
+    margin-bottom: 15px;
+}
+
+.adm-crs-form-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.adm-crs-input, .adm-crs-textarea {
+    padding: 10px 14px;
+    border: 1px solid #dcdfe3;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.adm-crs-input::placeholder, 
+.adm-crs-textarea::placeholder {
+    color: #f3e3e3;         /* Changes the hint text to a light grey */
+    opacity: 1;             /* Ensures the color is fully applied in Firefox */
+}
+.adm-crs-input { flex: 1; min-width: 150px; }
+.adm-crs-textarea { flex: 3; min-width: 300px; height: 42px; resize: none; }
+
+.adm-crs-input:focus, .adm-crs-textarea:focus {
+    border-color: #3498db;
+}
+
+.adm-crs-btn-primary {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.adm-crs-btn-primary:hover { background-color: #2980b9; }
+
+/* Table Styles */
+.adm-crs-table-wrapper {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border: 1px solid #e1e8ed;
+}
+
+.adm-crs-table {
+    border-collapse: collapse;
+    width: 100%;
+    background: white;
+}
+
+.adm-crs-table th {
+    background-color: #f8fafc;
+    color: #64748b;
+    text-align: left;
+    padding: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid #edf2f7;
+}
+
+.adm-crs-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+    font-size: 0.9rem;
+    vertical-align: middle;
+}
+
+.adm-crs-code-cell {
+    font-family: monospace;
+    font-weight: bold;
+    color: #3498db;
+}
+
+.adm-crs-badge-info {
+    background: #e1effe;
+    color: #1e429f;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.adm-crs-status {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.adm-crs-status.active { background: #def7ec; color: #03543f; }
+.adm-crs-status.inactive { background: #fde8e8; color: #9b1c1c; }
+
+/* Actions & Dropdowns */
+.adm-crs-actions-cell {
+    width: 280px;
+}
+
+.adm-crs-action-group {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.adm-crs-btn-edit, .adm-crs-btn-delete {
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.adm-crs-btn-edit { background: #fef3c7; color: #92400e; }
+.adm-crs-btn-delete { background: #fee2e2; color: #991b1b; }
+
+.adm-crs-select-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+
+.adm-crs-select {
+    padding: 4px;
+    border-radius: 4px;
+    border: 1px solid #e2e8f0;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.add-f, .add-s { border-left: 3px solid #10b981; }
+.rem-f, .rem-s { border-left: 3px solid #ef4444; }
+
+.adm-crs-select:hover { border-color: #cbd5e1; }

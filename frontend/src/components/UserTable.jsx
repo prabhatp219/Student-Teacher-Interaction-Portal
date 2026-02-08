@@ -7,43 +7,57 @@ export default function UserTable({ users, onDisable, onDelete }) {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const dropdownRef = useRef(null);
 
+  /* ------------------ FILTER USERS ------------------ */
   useEffect(() => {
     setFilteredUsers(users);
   }, [users]);
 
   useEffect(() => {
-    const delayDebounce = setTimeout(() => {
-      let filtered = users;
-      if (searchTerm.trim()) {
-        const term = searchTerm.toLowerCase();
-        filtered = users.filter(
-          (user) =>
-            user.name.toLowerCase().includes(term) ||
-            user.email.toLowerCase().includes(term)
+    const timeout = setTimeout(() => {
+      const term = searchTerm.trim().toLowerCase();
+      if (!term) {
+        setFilteredUsers(users);
+      } else {
+        setFilteredUsers(
+          users.filter(
+            (u) =>
+              u.name.toLowerCase().includes(term) ||
+              u.email.toLowerCase().includes(term),
+          ),
         );
       }
-      setFilteredUsers(filtered);
     }, 300);
-    return () => clearTimeout(delayDebounce);
+
+    return () => clearTimeout(timeout);
   }, [searchTerm, users]);
 
+  /* ------------------ DROPDOWN LOGIC ------------------ */
+  const toggleMenu = (id) => {
+    setOpenId((prev) => (prev === id ? null : id));
+  };
+
   useEffect(() => {
-    function handleClickOutside(e) {
+    const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setOpenId(null);
       }
-    }
+    };
+
     if (openId !== null) {
       document.addEventListener("mousedown", handleClickOutside);
     }
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, [openId]);
 
+  /* ------------------ RENDER ------------------ */
   return (
     <div className="adm_table_section">
-      {/* Search Header */}
+      {/* Search */}
       <div className="adm_search_container">
-        <div className="adm_search_input_wrapper" style={{ position: 'relative', flex: 1 }}>
+        <div style={{ position: "relative", flex: 1 }}>
           <input
             type="text"
             placeholder="Search name or email..."
@@ -51,51 +65,73 @@ export default function UserTable({ users, onDisable, onDelete }) {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="adm_search_input"
           />
-          <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }}>🔍</span>
+          <span
+            style={{
+              position: "absolute",
+              right: "12px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              opacity: 0.5,
+            }}
+          >
+            🔍
+          </span>
         </div>
       </div>
 
-      {/* Table Area */}
+      {/* Table */}
       {filteredUsers.length === 0 ? (
         <div className="adm_no_results">No matches found.</div>
       ) : (
         <div className="adm_table_wrapper">
-          <table className="adm_table_main">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-          </table>
-          
           <div className="adm_table_scroll_area">
             <table className="adm_table_main">
+              <thead>
+                <tr>
+                  <th>NAME</th>
+                  <th>EMAIL</th>
+                  <th>ACTIONS</th>
+                </tr>
+              </thead>
+
               <tbody>
-                {filteredUsers.map((user) => (
-                  <tr key={user._id}>
-                    <td>{user.name}</td>
-                    <td>{user.email}</td>
+                {filteredUsers.map((u) => (
+                  <tr key={u._id}>
+                    <td>{u.name}</td>
+                    <td>{u.email}</td>
+
                     <td className="adm_action_cell">
                       <button
                         className="adm_options_btn"
-                        onClick={() => setOpenId(openId === user._id ? null : user._id)}
+                        onClick={() =>
+                          setOpenId(openId === u._id ? null : u._id)
+                        }
                       >
-                        Options <span>▾</span>
+                        Options
                       </button>
 
-                      {openId === user._id && (
-                        <div ref={dropdownRef} className="adm_options_menu">
+                      {openId === u._id && (
+                        <div
+                          style={{
+                            marginTop: "8px",
+                            display: "flex",
+                            gap: "8px",
+                          }}
+                        >
                           <button
-                            className="adm_menu_item"
-                            onClick={() => { setOpenId(null); onDisable(user._id); }}
+                            className="adm_options_btn"
+                            onClick={() => onDisable(u._id)}
                           >
                             Disable
                           </button>
+
                           <button
-                            className="adm_menu_item danger"
-                            onClick={() => { setOpenId(null); onDelete(user._id); }}
+                            className="adm_options_btn"
+                            style={{
+                              background: "#fdecea",
+                              color: "#d9534f",
+                            }}
+                            onClick={() => onDelete(u._id)}
                           >
                             Delete
                           </button>
