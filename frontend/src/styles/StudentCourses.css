@@ -1,0 +1,60 @@
+/* Page wrapper */
+.student-courses-page {
+  padding: 10px;
+}
+
+/* Page title */
+.student-courses-page h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #0f172a;
+}
+
+/* Grid for course cards */
+.student-courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+/* Individual course card */
+.student-course-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover effect */
+.student-course-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* Course title */
+.student-course-card h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #020617;
+}
+
+/* Course description */
+.student-course-card p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #64748b;
+}
+
+/* Empty state */
+.student-courses-page p {
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* Loading text */
+.student-courses-page > p {
+  margin-top: 20px;
+}

@@ -3,11 +3,14 @@ const Assignment = require("../models/Assignment");
 const Announcement = require("../models/Announcement");
 const User = require("../models/User");
 
+/**
+ * Student dashboard summary
+ */
 const getStudentDashboard = async (req, res) => {
   try {
     const studentId = req.user.id;
 
-    // 1️⃣ Enrolled courses
+    // Enrolled courses
     const courses = await Course.find({
       students: studentId,
       isActive: true,
@@ -16,14 +19,13 @@ const getStudentDashboard = async (req, res) => {
     const enrolledCourses = courses.length;
     const courseIds = courses.map(c => c._id);
 
-    // 2️⃣ Pending assignments (published assignments in enrolled courses)
+    // Pending assignments
     const pendingAssignments = await Assignment.countDocuments({
       course: { $in: courseIds },
       status: "published",
     });
-    //new changes
 
-    // 3️⃣ Announcements relevant to student
+    // Announcements
     const student = await User.findById(studentId).select("department role");
 
     const announcements = await Announcement.countDocuments({
@@ -49,4 +51,28 @@ const getStudentDashboard = async (req, res) => {
   }
 };
 
-module.exports = { getStudentDashboard };
+/**
+ * Get logged-in student's courses
+ */
+const getMyCourses = async (req, res) => {
+  try {
+    const studentId = req.user.id;
+
+    const courses = await Course.find({
+      students: studentId,
+      isActive: true,
+    })
+      .select("title description department faculty")
+      .populate("faculty", "name email");
+
+    res.json(courses);
+  } catch (err) {
+    console.error("student.getMyCourses", err);
+    res.status(500).json({ msg: "Server error" });
+  }
+};
+
+module.exports = {
+  getStudentDashboard,
+  getMyCourses,
+};

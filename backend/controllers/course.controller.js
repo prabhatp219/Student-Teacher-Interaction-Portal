@@ -41,6 +41,25 @@ exports.getCourse = async (req, res) => {
     res.status(500).json({ msg: 'Server error' });
   }
 };
+//get my course controller actual object not the numbers.
+exports.getMyCourses = async (req, res) => {
+  try {
+    const studentId = req.user.id;
+
+    const courses = await Course.find({
+      students: studentId,
+      isActive: true,
+    })
+      .populate("faculty", "name email")
+      .select("title description department faculty");
+
+    res.json(courses);
+  } catch (err) {
+    console.error("student.getMyCourses", err);
+    res.status(500).json({ msg: "Server error" });
+  }
+};
+
 
 exports.createCourse = async (req, res) => {
   try {

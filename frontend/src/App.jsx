@@ -1,8 +1,12 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
+//student
 import StudentLayout from "./pages/StudentLayout";
 import StudentDashboard from "./pages/StudentDashboard";
+import StudentCourses from "./pages/StudentCourses";
+// faculty
 import FacultyDashboard from "./pages/FacultyDashboard";
+//admin
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminUsers from "./pages/admin_subpages/AdminUsers";
@@ -26,6 +30,7 @@ export default function App() {
         }
       >
         <Route index element={<StudentDashboard />} />
+        <Route path="courses" element={<StudentCourses />} />
       </Route>
 
       {/* Faculty */}
