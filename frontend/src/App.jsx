@@ -4,8 +4,11 @@ import Login from "./pages/Login";
 import StudentLayout from "./pages/StudentLayout";
 import StudentDashboard from "./pages/StudentDashboard";
 import StudentCourses from "./pages/StudentCourses";
+import StudentAssignments from "./pages/StudentAssignments";
 // faculty
-import FacultyDashboard from "./pages/FacultyDashboard";
+// import FacultyDashboard from "./pages/FacultyDashboard";
+import FacultyDashboard from "./pages/faculty/FacultyDashboard";
+import FacultyLayout from "./pages/faculty/FacultyLayout";
 //admin
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -31,6 +34,7 @@ export default function App() {
       >
         <Route index element={<StudentDashboard />} />
         <Route path="courses" element={<StudentCourses />} />
+        <Route path="assignments" element={<StudentAssignments />} />
       </Route>
 
       {/* Faculty */}
