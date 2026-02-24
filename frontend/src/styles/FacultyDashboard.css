@@ -1,149 +1,182 @@
-/* Root */
 .faculty-db {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+  width: 100%; /* Spans the full container */
+  margin: 0;
 }
 
-/* Header */
 .faculty-db-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #ffffff;
-  padding: 20px 24px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  margin-bottom: 2rem;
 }
 
 .faculty-db-greeting h1 {
-  margin: 0;
-  font-size: 22px;
-  color: #111827;
+  font-size: 2rem;
+  color: #1e293b;
+  margin-bottom: 0.4rem;
 }
 
-.faculty-db-greeting p {
-  margin: 4px 0 0;
-  color: #6b7280;
-  font-size: 14px;
-}
-
-.faculty-db-date {
-  font-size: 14px;
-  color: #374151;
-  background: #f3f4f6;
-  padding: 8px 12px;
-  border-radius: 8px;
-}
-
-/* Stats */
-.faculty-db-stats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-}
-
-.faculty-db-card {
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 14px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
-}
-
-.faculty-db-card h3 {
-  margin: 0;
-  font-size: 15px;
-  color: #6b7280;
-}
-
-.faculty-db-card p {
-  margin: 8px 0 0;
-  font-size: 28px;
+.faculty-status-chip {
+  background: #ecfdf5;
+  color: #059669;
+  padding: 6px 16px;
+  border-radius: 50px;
   font-weight: 600;
-  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #d1fae5;
 }
 
-/* Main Section */
-.faculty-db-main {
+.faculty-status-chip .dot {
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+}
+
+/* Grid System */
+.faculty-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 24px;
+  grid-template-columns: 1fr 350px; /* Left column grows, right is fixed */
+  gap: 2rem;
+  width: 100%;
 }
 
-/* Panels */
-.faculty-db-panel {
-  background: #ffffff;
-  padding: 24px;
-  border-radius: 14px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
+/* Stats Cards - Distinctive Layout */
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
-.faculty-db-panel h2 {
-  margin-top: 0;
-  font-size: 18px;
-  color: #111827;
-}
-
-.faculty-db-panel p {
-  font-size: 14px;
-  color: #6b7280;
-}
-
-/* Bars */
-.faculty-db-bars {
+.faculty-stat-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 20px;
   display: flex;
-  align-items: flex-end;
-  gap: 12px;
-  height: 180px;
-  margin-top: 20px;
+  align-items: center;
+  gap: 15px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04);
+  border-bottom: 4px solid #e2e8f0;
+  transition: transform 0.2s;
 }
 
-.faculty-db-bar {
-  flex: 1;
-  background: #e5e7eb;
-  border-radius: 8px 8px 0 0;
+.faculty-stat-card:hover { transform: translateY(-5px); }
+.course-accent { border-bottom-color: #3b82f6; }
+.student-accent { border-bottom-color: #8b5cf6; }
+.review-accent { border-bottom-color: #f59e0b; }
+
+.stat-icon {
+  font-size: 1.8rem;
+  background: #f8fafc;
+  width: 55px;
+  height: 55px;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
-  font-size: 12px;
-  color: #374151;
-  padding-bottom: 6px;
+  border-radius: 15px;
 }
 
-.faculty-db-bar-active {
-  background: #2563eb;
-  color: #ffffff;
+.stat-info h3 { font-size: 1.5rem; color: #0f172a; }
+.stat-info p { font-size: 0.85rem; color: #64748b; font-weight: 500; }
+
+/* Performance Panel */
+.performance-panel, .action-panel, .upcoming-panel {
+  background: white;
+  padding: 1.8rem;
+  border-radius: 24px;
+  box-shadow: 0 10px 15px -3px rgba(140, 51, 51, 0.04);
+  margin-bottom: 2rem;
 }
 
-/* Quick Actions */
-.faculty-db-actions {
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.chart-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 250px; /* Increased height */
+  padding: 20px;
+  background: #fcfcfc;
+  border-radius: 15px;
+  margin-top: 1rem;
+}
+.bar-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  align-items: center;
+  height: 100%; /* Allow wrapper to use full chart height */
+  justify-content: flex-end;
+  flex: 1;
 }
 
-.faculty-db-btn {
-  padding: 12px;
-  border: none;
-  border-radius: 10px;
-  background: #2563eb;
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 500;
+.bar-fill {
+  width: 40px;
+  background: #e0f2fe; /* Light blue for inactive */
+  border-radius: 8px 8px 4px 4px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.bar-fill.active {
+  background: #0ea5e9; /* Strong blue from your image */
+}
+
+.bar-label { font-size: 0.75rem; color: #94a3b8; font-weight: 600; }
+
+.bar-label {
+  margin-top: 10px;
+  font-weight: 600;
+  color: #94a3b8;
+}
+/* Quick Actions */
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 1.5rem;
+}
+
+.action-btn {
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  text-align: left;
+  font-weight: 600;
+  color: #334155;
   cursor: pointer;
+  transition: all 0.2s;
 }
 
-.faculty-db-btn:hover {
-  background: #1d4ed8;
+.action-btn.primary {
+  background: #0ea5e9;
+  color: white;
+  border: none;
 }
 
-/* Responsive */
-@media (max-width: 1024px) {
-  .faculty-db-stats {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.action-btn:hover { background: #f1f5f9; transform: scale(1.02); }
 
-  .faculty-db-main {
-    grid-template-columns: 1fr;
-  }
+/* Schedule Styling */
+.schedule-item {
+  display: flex;
+  gap: 15px;
+  padding: 12px 0;
+  border-bottom: 1px dashed #e2e8f0;
+}
+
+.schedule-item .time {
+  font-weight: 700;
+  color: #3b82f6;
+  font-size: 0.85rem;
+  min-width: 70px;
 }

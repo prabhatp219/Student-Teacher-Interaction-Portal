@@ -9,6 +9,7 @@ import StudentAssignments from "./pages/StudentAssignments";
 // import FacultyDashboard from "./pages/FacultyDashboard";
 import FacultyDashboard from "./pages/faculty/FacultyDashboard";
 import FacultyLayout from "./pages/faculty/FacultyLayout";
+import FacultyAssignment from "./pages/faculty/FacultyAssignment";
 //admin
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -41,11 +42,14 @@ export default function App() {
       <Route
         path="/faculty"
         element={
-          <ProtectedRoute role="faculty">
-            <FacultyDashboard />
+          <ProtectedRoute>
+            <FacultyLayout />
           </ProtectedRoute>
         }
-      />
+      >
+        <Route index element={<FacultyDashboard/>}/>
+        <Route path="assignments" element={<FacultyAssignment />} />
+      </Route>  
 
       {/* Admin */}
       <Route

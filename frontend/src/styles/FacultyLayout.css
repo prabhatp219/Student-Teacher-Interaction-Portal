@@ -1,65 +1,115 @@
 .faculty-shell {
   display: flex;
-  min-height: 100vh;
-  background-color: #f5f7fb;
+  height: 100vh; /* Lock to viewport height */
+  width: 100vw;  /* Lock to viewport width */
+  background-color: #f0f7ff;
+  overflow: hidden; /* Prevents the whole page from scrolling */
 }
 
-/* Sidebar */
-.faculty-sidebar {
-  width: 260px;
-  background-color: #ffffff;
-  border-right: 1px solid #e5e7eb;
-  padding: 24px;
+.faculty-main {
+  flex: 1;
+  height: 100vh;
+  padding: 2.5rem;
+  background: white;
+  overflow: hidden; /* Removes the scrollbar from the dashboard area */
   display: flex;
   flex-direction: column;
 }
 
-/* Brand */
-.faculty-brand h2 {
+/* Sidebar Styling */
+.faculty-sidebar {
+  width: 280px;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  border-right: 1px solid #e2e8f0;
+}
+
+/* Brand Section */
+.faculty-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 2.5rem;
+  padding-left: 0.5rem;
+}
+
+.brand-icon {
+  background: #0ea5e9;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.brand-text h2 {
+  font-size: 1.3rem;
+  color: #0f172a;
   margin: 0;
-  color: #2563eb;
+  letter-spacing: -0.5px;
 }
 
-.faculty-brand span {
-  font-size: 13px;
-  color: #6b7280;
+.brand-text span {
+  font-size: 0.75rem;
+  color: #64748b;
+  text-transform: uppercase;
+  font-weight: 700;
 }
 
-/* Nav */
+/* Navigation Links */
 .faculty-nav {
   display: flex;
   flex-direction: column;
-  margin-top: 30px;
-  gap: 10px;
+  gap: 0.5rem;
+  flex: 1;
 }
 
 .faculty-link {
-  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
   text-decoration: none;
-  color: #374151;
-  border-radius: 8px;
+  color: #475569;
+  padding: 0.8rem 1rem;
+  border-radius: 14px;
   font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
 }
 
-/* Active link */
-.faculty-link.active {
-  background-color: #2563eb;
-  color: #ffffff;
+.nav-emoji {
+  font-size: 1.1rem;
 }
 
-/* Hover */
+/* Hover & Active States matching your student portal */
 .faculty-link:hover {
-  background-color: #e0e7ff;
+  background: #f8fafc;
+  color: #0ea5e9;
 }
 
-/* Logout */
-.faculty-logout {
+.faculty-link.active {
+  background: #e0f2fe; /* Light blue capsule effect */
+  color: #0ea5e9;
+  font-weight: 600;
+}
+
+/* Logout & Footer */
+.sidebar-footer {
   margin-top: auto;
-  color: #dc2626;
+  padding-top: 1rem;
+  border-top: 1px solid #f1f5f9;
 }
 
-/* Main content */
-.faculty-main {
-  flex: 1;
-  padding: 30px;
+.faculty-logout {
+  color: #64748b;
 }
+
+.faculty-logout:hover {
+  background: #fef2f2;
+  color: #ef4444;
+}
+
