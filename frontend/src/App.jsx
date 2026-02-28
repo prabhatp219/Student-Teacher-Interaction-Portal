@@ -10,6 +10,8 @@ import StudentAssignments from "./pages/StudentAssignments";
 import FacultyDashboard from "./pages/faculty/FacultyDashboard";
 import FacultyLayout from "./pages/faculty/FacultyLayout";
 import FacultyAssignment from "./pages/faculty/FacultyAssignment";
+import MyCourses from "./pages/faculty/MyCourses";
+import CourseDetails from "./pages/faculty/CourseDetails";
 //admin
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -49,6 +51,8 @@ export default function App() {
       >
         <Route index element={<FacultyDashboard/>}/>
         <Route path="assignments" element={<FacultyAssignment />} />
+        <Route path="courses" element={<MyCourses />}/>
+        <Route path="/faculty/courses/:id" element={<CourseDetails />}/>
       </Route>  
 
       {/* Admin */}

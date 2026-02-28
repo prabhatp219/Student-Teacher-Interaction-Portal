@@ -1,8 +1,11 @@
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import "../../styles/FacultyAssignment.css";
 
-export default function FacultyAssignment({ courseId }) {
+export default function FacultyAssignment() {
+  const { courseId } = useParams();
+
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -12,6 +15,11 @@ export default function FacultyAssignment({ courseId }) {
     latePenaltyPercent: 0,
     status: "not published"
   });
+
+  // 🚨 Safety guard
+  if (!courseId) {
+    return <p>Please select a course before creating an assignment.</p>;
+  }
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -37,7 +45,6 @@ export default function FacultyAssignment({ courseId }) {
         }
       );
 
-      console.log("Created assignment:", res.data);
       alert("Assignment created successfully");
 
       setForm({
@@ -58,7 +65,11 @@ export default function FacultyAssignment({ courseId }) {
 
   return (
     <div className="faculty-assignment-container">
+      {/* 👇 Context matters */}
       <h2>Create Assignment</h2>
+      <p className="course-context">
+        Course ID: <strong>{courseId}</strong>
+      </p>
 
       <form className="assignment-form" onSubmit={handleSubmit}>
         <input

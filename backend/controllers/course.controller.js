@@ -200,3 +200,22 @@ exports.assignUsers = async (req, res) => {
     res.status(500).json({ msg: 'Server error' });
   }
 };
+
+// GET courses taught by logged-in faculty
+exports.getMyFacultyCourses = async (req, res) => {
+  try {
+    const facultyId = req.user.id;
+
+    const courses = await Course.find({
+      faculty: facultyId,
+      isActive: true,
+    })
+      .select("code title description department semester")
+      .populate("faculty", "name email");
+
+    res.json(courses);
+  } catch (err) {
+    console.error("faculty.getMyCourses", err);
+    res.status(500).json({ msg: "Server error" });
+  }
+};
