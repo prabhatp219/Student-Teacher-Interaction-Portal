@@ -9,11 +9,27 @@ const CourseDetails = () => {
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/v1/courses/${id}`, {
-          credentials: "include",
-        });
+        const token = localStorage.getItem("token"); // 👈 get JWT
+
+        const res = await fetch(
+          `http://localhost:5000/api/v1/courses/${id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`, // 👈 send token properly
+            },
+          }
+        );
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch course");
+        }
 
         const data = await res.json();
+
+        console.log("ID from URL:", id);
+        console.log("Course from backend:", data);
+
         setCourse(data);
       } catch (err) {
         console.error("Error fetching course:", err);
@@ -36,13 +52,31 @@ const CourseDetails = () => {
 
   return (
     <div style={{ padding: "30px" }}>
-      <h2>{course.name}</h2>
+      <h2>{course.title}</h2>
 
       <div style={{ marginTop: "15px" }}>
-        <p><strong>Code:</strong> {course.code}</p>
-        <p><strong>Department:</strong> {course.department}</p>
-        <p><strong>Semester:</strong> {course.semester}</p>
+        <p><strong>Code:</strong> {course.code || "Not set"}</p>
+        <p><strong>Department:</strong> {course.department || "Not set"}</p>
+        <p><strong>Semester:</strong> {course.semester || "Not set"}</p>
+        <p><strong>Description:</strong> {course.description || "Not set"}</p>
       </div>
+
+      <hr style={{ margin: "25px 0" }} />
+
+      <section>
+        <h3>Faculty</h3>
+        {course.faculty && course.faculty.length > 0 ? (
+          <ul>
+            {course.faculty.map((f) => (
+              <li key={f._id}>
+                {f.name} ({f.email})
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No faculty assigned.</p>
+        )}
+      </section>
 
       <hr style={{ margin: "25px 0" }} />
 

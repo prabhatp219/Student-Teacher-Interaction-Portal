@@ -27,6 +27,12 @@ try {
 } catch (e) {
   console.error("❌ student routes failed:", e.message);
 }
+try {
+  router.use("/faculty", require("./faculty.routes"));
+  console.log("✅ faculty routes loaded");
+} catch (e) {
+  console.error("❌ faculty routes failed:", e.message);
+}
 
 
 

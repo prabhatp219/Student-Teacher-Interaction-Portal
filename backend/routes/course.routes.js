@@ -5,6 +5,9 @@ const { requireRole } = require('../middleware/rbac');
 
 // public (authenticated) listing
 router.get('/', auth, courseCtrl.listCourses);
+// faculty: get my courses
+router.get("/my/faculty",auth,requireRole(["faculty"]),courseCtrl.getMyFacultyCourses);
+
 router.get('/:id', auth, courseCtrl.getCourse);
 
 // create/update/delete (faculty/admin)
@@ -22,8 +25,7 @@ router.post('/:id/remove-student', auth, requireRole(['faculty','admin']), cours
 //faculty route for course 
 router.post('/:id/add-faculty', auth, requireRole(['admin']), courseCtrl.addFaculty);
 router.post('/:id/remove-faculty', auth, requireRole(['admin']), courseCtrl.removeFaculty);
-// faculty: get my courses
-router.get("/my/faculty",auth,requireRole(["faculty"]),courseCtrl.getMyFacultyCourses);
+
 
 
 router.patch(
