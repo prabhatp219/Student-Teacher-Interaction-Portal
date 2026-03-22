@@ -1,145 +1,79 @@
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import "../../styles/FacultyAssignment.css";
 
-export default function FacultyAssignment() {
-  const { courseId } = useParams();
+export default function Assignments() {
+  const [assignments, setAssignments] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    dueAt: "",
-    maxMarks: "",
-    allowLate: false,
-    latePenaltyPercent: 0,
-    status: "not published"
-  });
+  useEffect(() => {
+    const fetchAssignments = async () => {
+      try {
+        const token = localStorage.getItem("token");
 
-  // 🚨 Safety guard
-  if (!courseId) {
-    return <p>Please select a course before creating an assignment.</p>;
-  }
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm({
-      ...form,
-      [name]: type === "checkbox" ? checked : value
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const token = localStorage.getItem("token");
-
-      const res = await axios.post(
-        `/api/assignments/course/${courseId}`,
-        form,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
+        const res = await axios.get(
+          "http://localhost:5000/api/v1/assignments",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        }
-      );
+        );
 
-      alert("Assignment created successfully");
+        console.log("DATA:", res.data); // 👈 keep this for sanity
 
-      setForm({
-        title: "",
-        description: "",
-        dueAt: "",
-        maxMarks: "",
-        allowLate: false,
-        latePenaltyPercent: 0,
-        status: "not published"
-      });
+        // ✅ ensure it's always an array
+        setAssignments(Array.isArray(res.data) ? res.data : []);
 
-    } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.msg || "Error creating assignment");
-    }
-  };
+      } catch (err) {
+        console.error(err);
+        alert("Failed to load assignments");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAssignments();
+  }, []);
+
+  if (loading) return <p>Loading assignments...</p>;
 
   return (
     <div className="faculty-assignment-container">
-      {/* 👇 Context matters */}
-      <h2>Create Assignment</h2>
-      <p className="course-context">
-        Course ID: <strong>{courseId}</strong>
-      </p>
+      <h2>All Assignments</h2>
 
-      <form className="assignment-form" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="title"
-          placeholder="Assignment title"
-          value={form.title}
-          onChange={handleChange}
-          required
-        />
+      {assignments.length === 0 ? (
+        <p>No assignments found</p>
+      ) : (
+        assignments.map((a) => (
+          <div
+            key={a._id}
+            style={{
+              border: "1px solid #ccc",
+              padding: "10px",
+              margin: "10px 0",
+              borderRadius: "8px",
+            }}
+          >
+            <h4>{a.title}</h4>
+            <p>{a.description}</p>
 
-        <textarea
-          name="description"
-          placeholder="Assignment description"
-          value={form.description}
-          onChange={handleChange}
-        />
+            <p>
+              <strong>Course:</strong>{" "}
+              {a.course?.title || a.courseName || "Unknown"}
+            </p>
 
-        <input
-          type="datetime-local"
-          name="dueAt"
-          value={form.dueAt}
-          onChange={handleChange}
-          required
-        />
+            <p>
+              <strong>Due:</strong>{" "}
+              {new Date(a.dueAt).toLocaleString()}
+            </p>
 
-        <input
-          type="number"
-          name="maxMarks"
-          placeholder="Maximum marks"
-          value={form.maxMarks}
-          onChange={handleChange}
-          min="1"
-          required
-        />
-
-        <label className="checkbox">
-          <input
-            type="checkbox"
-            name="allowLate"
-            checked={form.allowLate}
-            onChange={handleChange}
-          />
-          Allow late submission
-        </label>
-
-        {form.allowLate && (
-          <input
-            type="number"
-            name="latePenaltyPercent"
-            placeholder="Late penalty (%)"
-            value={form.latePenaltyPercent}
-            onChange={handleChange}
-            min="0"
-            max="100"
-          />
-        )}
-
-        <select
-          name="status"
-          value={form.status}
-          onChange={handleChange}
-        >
-          <option value="not published">Not Published</option>
-          <option value="draft">Draft</option>
-          <option value="published">Published</option>
-        </select>
-
-        <button type="submit">Create Assignment</button>
-      </form>
+            <p>
+              <strong>Status:</strong> {a.status}
+            </p>
+          </div>
+        ))
+      )}
     </div>
   );
 }

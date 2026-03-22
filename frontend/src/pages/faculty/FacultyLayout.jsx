@@ -1,7 +1,14 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import "../../styles/FacultyLayout.css";
 
 const FacultyLayout = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // remove auth
+    navigate("/login"); // redirect to login
+  };
+
   return (
     <div className="faculty-shell">
       {/* Faculty Sidebar */}
@@ -47,10 +54,15 @@ const FacultyLayout = () => {
             <span className="nav-emoji">👤</span> My Profile
           </NavLink>
 
+          {/* ✅ FIXED LOGOUT */}
           <div className="sidebar-footer">
-            <NavLink to="/logout" className="faculty-link faculty-logout">
+            <button
+              onClick={handleLogout}
+              className="faculty-link faculty-logout"
+              style={{ width: "100%", textAlign: "left", background: "none", border: "none", cursor: "pointer" }}
+            >
               <span className="nav-emoji">🚪</span> Logout
-            </NavLink>
+            </button>
           </div>
         </nav>
       </aside>

@@ -66,10 +66,24 @@ exports.getAssignment = async (req, res) => {
   }
 };
 
+exports.getAllAssignments = async (req, res) => {
+  try {
+    const assignments = await Assignment
+      .find()
+      .populate('course', 'title code')
+      .sort({ createdAt: -1 });
+
+    res.json(assignments); // ✅ MUST be array
+  } catch (err) {
+    console.error('assignment.getAllAssignments', err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
+
 exports.updateAssignment = async (req, res) => {
   try {
     const a = await Assignment
-      .findByIdAndUpdate(req.params.id, req.body, { new: true })
+      .findByIdAndUpdate(req.params.id, req.body, { new: true })    
       .populate('course', 'title code')
       .populate('createdBy', 'name email');
 
@@ -91,6 +105,30 @@ exports.deleteAssignment = async (req, res) => {
   } catch (err) {
     console.error('assignment.deleteAssignment', err);
     res.status(500).json({ msg: 'Server error' });
+  }
+};
+
+exports.getStudentAssignments = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // 1️⃣ find courses where student is enrolled
+    const courses = await Course.find({ students: userId });
+
+    const courseIds = courses.map(c => c._id);
+
+    // 2️⃣ find assignments for those courses
+    const assignments = await Assignment.find({
+      course: { $in: courseIds }
+    })
+      .populate("course", "title code")
+      .sort({ dueAt: 1 });
+
+    res.json(assignments);
+
+  } catch (err) {
+    console.error("assignment.getStudentAssignments", err);
+    res.status(500).json({ msg: "Server error" });
   }
 };
 

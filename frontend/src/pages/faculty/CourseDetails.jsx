@@ -4,7 +4,9 @@ import "../../styles/CourseDetails.css";
 
 const CourseDetails = () => {
   const { id } = useParams();
+
   const [course, setCourse] = useState(null);
+  const [assignments, setAssignments] = useState([]); // ✅ NEW
   const [loading, setLoading] = useState(true);
 
   // assignment form states
@@ -13,37 +15,63 @@ const CourseDetails = () => {
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
 
-  useEffect(() => {
-    const fetchCourse = async () => {
-      try {
-        const token = localStorage.getItem("token");
+  // ✅ FETCH COURSE
+  const fetchCourse = async () => {
+    try {
+      const token = localStorage.getItem("token");
 
-        const res = await fetch(
-          `http://localhost:5000/api/v1/courses/${id}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!res.ok) {
-          throw new Error("Failed to fetch course");
+      const res = await fetch(
+        `http://localhost:5000/api/v1/courses/${id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
+      );
 
-        const data = await res.json();
-        setCourse(data);
-      } catch (err) {
-        console.error("Error fetching course:", err);
-      } finally {
-        setLoading(false);
-      }
+      if (!res.ok) throw new Error("Failed to fetch course");
+
+      const data = await res.json();
+      setCourse(data);
+    } catch (err) {
+      console.error("Error fetching course:", err);
+    }
+  };
+
+  // ✅ FETCH ASSIGNMENTS
+  const fetchAssignments = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(
+        `http://localhost:5000/api/v1/assignments/course/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await res.json();
+      setAssignments(data);
+    } catch (err) {
+      console.error("Error fetching assignments:", err);
+    }
+  };
+
+  // ✅ LOAD BOTH
+  useEffect(() => {
+    const loadData = async () => {
+      await fetchCourse();
+      await fetchAssignments();
+      setLoading(false);
     };
 
-    fetchCourse();
+    loadData();
   }, [id]);
 
+  // ✅ CREATE ASSIGNMENT
   const handleCreateAssignment = async (e) => {
     e.preventDefault();
 
@@ -51,7 +79,7 @@ const CourseDetails = () => {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        "http://localhost:5000/api/v1/assignments",
+        `http://localhost:5000/api/v1/assignments/course/${id}`,
         {
           method: "POST",
           headers: {
@@ -61,19 +89,20 @@ const CourseDetails = () => {
           body: JSON.stringify({
             title,
             description,
-            dueDate,
-            courseId: id,
+            dueAt: new Date(dueDate),
+            maxMarks: 100,
+            allowLate: false,
+            latePenaltyPercent: 0,
+            status: "draft",
           }),
         }
       );
 
-      if (!res.ok) {
-        throw new Error("Failed to create assignment");
-      }
+      if (!res.ok) throw new Error("Failed to create assignment");
 
-      const data = await res.json();
-      console.log("Assignment created:", data);
+      await fetchAssignments(); // 🔥 refresh list
 
+      // reset form
       setTitle("");
       setDescription("");
       setDueDate("");
@@ -90,15 +119,10 @@ const CourseDetails = () => {
     return <div className="course-details-loading">Loading course...</div>;
 
   if (!course)
-    return (
-      <div className="course-details-error">
-        Course not found
-      </div>
-    );
+    return <div className="course-details-error">Course not found</div>;
 
   return (
     <div className="course-details-container">
-
       <h2 className="course-details-title">{course.title}</h2>
 
       <div className="course-details-info">
@@ -110,6 +134,7 @@ const CourseDetails = () => {
 
       <hr className="course-details-divider" />
 
+      {/* ✅ FACULTY (UNCHANGED) */}
       <section className="course-details-section">
         <h3>Faculties</h3>
         {course.faculty && course.faculty.length > 0 ? (
@@ -127,6 +152,7 @@ const CourseDetails = () => {
 
       <hr className="course-details-divider" />
 
+      {/* ✅ STUDENTS (UNCHANGED) */}
       <section className="course-details-section">
         <h3>Students Enrolled</h3>
         {course.students && course.students.length > 0 ? (
@@ -144,8 +170,8 @@ const CourseDetails = () => {
 
       <hr className="course-details-divider" />
 
+      {/* ✅ ASSIGNMENTS (FIXED PART) */}
       <section className="course-details-section">
-
         <h3>Assignments</h3>
 
         <button
@@ -153,7 +179,7 @@ const CourseDetails = () => {
           onClick={() => setShowForm(!showForm)}
         >
           Create Assignment
-        </button> 
+        </button>
 
         {showForm && (
           <form
@@ -191,26 +217,32 @@ const CourseDetails = () => {
 
             <div className="course-details-form-actions">
               <button type="submit">Create</button>
-              <button
-                type="button"
-                onClick={() => setShowForm(false)}
-              >
+              <button type="button" onClick={() => setShowForm(false)}>
                 Cancel
               </button>
             </div>
           </form>
         )}
 
-        <p className="course-details-placeholder">
-          Assignments for this course will appear here.
-        </p>
-
+        {/* ✅ SHOW ASSIGNMENTS */}
+        {assignments.length === 0 ? (
+          <p className="course-details-placeholder">
+            No assignments yet.
+          </p>
+        ) : (
+          assignments.map((a) => (
+            <div key={a._id} className="assignment-card">
+              <h4>{a.title}</h4>
+              <p>{a.description}</p>
+              <p>
+                Due: {new Date(a.dueAt).toLocaleDateString()}
+              </p>
+            </div>
+          ))
+        )}
       </section>
-
     </div>
   );
 };
 
 export default CourseDetails;
-
-// done 

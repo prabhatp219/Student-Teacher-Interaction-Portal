@@ -4,6 +4,9 @@ const AttendanceSchema = new Schema(
   {
     course: { type: Schema.Types.ObjectId, ref: "Course", required: true },
     date: { type: Date, required: true },
+    title: { type: String, required: true },
+    description: String,
+    dueDate: { type: Date, required: true },
 
     present: [{ type: Schema.Types.ObjectId, ref: "User" }],
     takenBy: { type: Schema.Types.ObjectId, ref: "User" },

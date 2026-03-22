@@ -1,9 +1,17 @@
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import "../styles/StudentDashboard.css";
 
 const StudentLayout = () => {
   const location = useLocation();
+  const navigate = useNavigate(); // ✅ added
+
   const isActive = (path) => location.pathname === path;
+
+  // ✅ logout logic
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
   return (
     <div className="layout-wrapper">
@@ -39,6 +47,24 @@ const StudentLayout = () => {
             active={isActive("/student/profile")} 
           />
         </nav>
+
+        {/* ✅ LOGOUT BUTTON */}
+        <div className="sidebar-footer">
+          <button
+            onClick={handleLogout}
+            className="nav-link logout-btn"
+            style={{
+              width: "100%",
+              textAlign: "left",
+              background: "none",
+              border: "none",
+              cursor: "pointer"
+            }}
+          >
+            <span className="nav-icon">🚪</span>
+            Logout
+          </button>
+        </div>
 
         <div className="support-card">
           <p className="support-text">Need help?</p>

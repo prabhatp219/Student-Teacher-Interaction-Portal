@@ -12,13 +12,17 @@ const StudentAssignments = () => {
         const token = localStorage.getItem("token");
 
         const res = await axios.get(
-          "http://localhost:5000/api/v1/student/assignments",
+          "http://localhost:5000/api/v1/assignments/student", // ✅ fixed
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
 
-        setAssignments(res.data || []);
+        console.log("Assignments:", res.data); // 👈 keep for debugging
+
+        // ✅ ensure array
+        setAssignments(Array.isArray(res.data) ? res.data : []);
+
       } catch (err) {
         console.error("Assignments error:", err);
       } finally {
@@ -42,11 +46,15 @@ const StudentAssignments = () => {
           {assignments.map((a) => (
             <div className="assignment-card" key={a._id}>
               <h3>{a.title}</h3>
-              <p className="course-name">{a.course?.title}</p>
+
+              <p className="course-name">
+                {a.course?.title || a.courseName || "Unknown Course"}
+              </p>
+
               <p>{a.description}</p>
 
               <p className="due-date">
-                Due: {new Date(a.dueDate).toLocaleDateString()}
+                Due: {new Date(a.dueAt).toLocaleDateString()} {/* ✅ fixed */}
               </p>
 
               <span className={`status ${a.status}`}>
@@ -54,7 +62,9 @@ const StudentAssignments = () => {
               </span>
 
               <button className="submit-btn">
-                {a.status === "submitted" ? "View Submission" : "Submit"}
+                {a.status === "submitted"
+                  ? "View Submission"
+                  : "Submit"}
               </button>
             </div>
           ))}
