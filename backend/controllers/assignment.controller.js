@@ -30,7 +30,8 @@ exports.createForCourse = async (req, res) => {
       ...req.body,
       course: courseId,
       courseName: course.title,
-      createdBy: req.user.id
+      createdBy: req.user.id,
+      status: "published"
     });
 
     // 2️⃣ fetch again with populate
@@ -119,7 +120,8 @@ exports.getStudentAssignments = async (req, res) => {
 
     // 2️⃣ find assignments for those courses
     const assignments = await Assignment.find({
-      course: { $in: courseIds }
+      course: { $in: courseIds },
+      status: "published"
     })
       .populate("course", "title code")
       .sort({ dueAt: 1 });
@@ -132,5 +134,14 @@ exports.getStudentAssignments = async (req, res) => {
   }
 };
 
+exports.submitAssignment = async (req, res) => {
+  const submission = await Submission.create({
+    assignment: req.params.assignmentId,
+    student: req.user.id,
+    content: req.body.content
+  });
+
+  res.json(submission);
+};
 
 
