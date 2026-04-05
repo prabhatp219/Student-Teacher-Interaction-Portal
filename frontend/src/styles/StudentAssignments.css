@@ -1,0 +1,175 @@
+body {
+  overflow-x: hidden;
+}
+.st-asgn-page-wrapper {
+  background-color: #fcfcfc;
+  padding: 50px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  min-height: 100vh;
+}
+
+.st-asgn-header-container {
+  margin-bottom: 40px;
+}
+
+.st-asgn-main-title {
+  font-size: 32px;
+  color: #0f172a;
+  font-weight: 700;
+  border-left: 4px solid #3b82f6;
+  padding-left: 20px;
+}
+
+.st-asgn-grid-layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 30px;
+}
+
+.st-asgn-card-v2 {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.st-asgn-card-v2:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.05);
+}
+
+.st-asgn-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 10px;
+}
+
+.st-asgn-card-header h3 {
+  font-size: 20px;
+  color: #1e293b;
+  margin: 0;
+}
+
+.st-asgn-arrow { color: #94a3b8; font-size: 18px; }
+
+.st-asgn-description-text {
+  color: #64748b;
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 25px;
+  min-height: 48px;
+}
+
+.st-asgn-details-table {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 20px;
+}
+
+.st-asgn-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.st-asgn-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+}
+
+.st-asgn-value {
+  font-size: 14px;
+  color: #334155;
+  font-weight: 500;
+}
+
+/* Status Pill */
+.st-asgn-pill-badge {
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.st-asgn-pill-published, .st-asgn-pill- {
+  background-color: #f0fdf4;
+  color: #16a34a;
+}
+
+.st-asgn-pill-submitted {
+  background-color: #eff6ff;
+  color: #2563eb;
+}
+
+.st-asgn-dot { font-size: 8px; }
+
+/* Action Button */
+.st-asgn-interaction-btn {
+  width: 100%;
+  margin-top: 25px;
+  padding: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  color: #475569;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.st-asgn-interaction-btn:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+/* Input Area */
+.st-asgn-expanded-input textarea {
+  width: 100%;
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 100px;
+}
+
+.st-asgn-action-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.st-asgn-save-btn {
+  flex: 2;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.st-asgn-cancel-btn {
+  flex: 1;
+  background: #f1f5f9;
+  color: #64748b;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}

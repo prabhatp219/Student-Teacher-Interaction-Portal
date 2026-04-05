@@ -1,18 +1,21 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
-//student
+
+// student
 import StudentLayout from "./pages/StudentLayout";
 import StudentDashboard from "./pages/StudentDashboard";
 import StudentCourses from "./pages/StudentCourses";
 import StudentAssignments from "./pages/StudentAssignments";
+
 // faculty
-// import FacultyDashboard from "./pages/FacultyDashboard";
 import FacultyDashboard from "./pages/faculty/FacultyDashboard";
 import FacultyLayout from "./pages/faculty/FacultyLayout";
 import FacultyAssignment from "./pages/faculty/FacultyAssignment";
 import MyCourses from "./pages/faculty/MyCourses";
 import CourseDetails from "./pages/faculty/CourseDetails";
-//admin
+import FacultySubmissions from "./pages/faculty/FacultySubmissions";
+
+// admin
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminUsers from "./pages/admin_subpages/AdminUsers";
@@ -49,11 +52,23 @@ export default function App() {
           </ProtectedRoute>
         }
       >
-        <Route index element={<FacultyDashboard/>}/>
+        <Route index element={<FacultyDashboard />} />
+
+        {/* assignments list */}
         <Route path="assignments" element={<FacultyAssignment />} />
-        <Route path="courses" element={<MyCourses />}/>
-        <Route path="/faculty/courses/:id" element={<CourseDetails />}/>
-      </Route>  
+
+        {/* ✅ FIXED: relative path */}
+        <Route
+          path="assignment/:id/submissions"
+          element={<FacultySubmissions />}
+        />
+
+        {/* courses */}
+        <Route path="courses" element={<MyCourses />} />
+
+        {/* ✅ FIXED: removed /faculty prefix */}
+        <Route path="courses/:id" element={<CourseDetails />} />
+      </Route>
 
       {/* Admin */}
       <Route
@@ -67,7 +82,6 @@ export default function App() {
         <Route index element={<AdminDashboard />} />
         <Route path="users" element={<AdminUsers />} />
         <Route path="dashboard" element={<Dashboard />} />
-        <Route path="users" element={<AdminUsers />} />
         <Route path="courses" element={<AdminCourses />} />
       </Route>
 

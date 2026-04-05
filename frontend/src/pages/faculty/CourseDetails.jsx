@@ -126,10 +126,10 @@ const CourseDetails = () => {
       <h2 className="course-details-title">{course.title}</h2>
 
       <div className="course-details-info">
-        <p><strong>Code:</strong> {course.code || "Not set"}</p>
-        <p><strong>Department:</strong> {course.department || "Not set"}</p>
-        <p><strong>Semester:</strong> {course.semester || "Not set"}</p>
-        <p><strong>Description:</strong> {course.description || "Not set"}</p>
+        <p><strong style={{color:"black"}}>Code:</strong>{" "}<span style={{ color: "black" }}>{course.code || "Not set"}</span></p>
+        <p><strong style={{color:"black"}}>Department:</strong>{" "}<span style={{ color: "black" }}>{course.department || "Not set"}</span></p>
+        <p><strong style={{color:"black"}}>Semester:</strong>{" "}<span style={{ color: "black" }}>{course.semester || "Not set"}</span></p>
+        <p><strong style={{color:"black"}}>Description:</strong>{" "}<span style={{ color: "black" }}>{course.description || "Not set"}</span></p>
       </div>
 
       <hr className="course-details-divider" />

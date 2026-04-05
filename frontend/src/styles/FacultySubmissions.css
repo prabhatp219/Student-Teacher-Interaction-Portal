@@ -37,7 +37,7 @@
 }
 
 /* ─── Page Container ─────────────────────────────────────────────────── */
-.faculty-assignment-container {
+.faculty-submissions-container {
   padding: 40px 48px;
   width: 100%;
   max-width: 1400px;
@@ -48,7 +48,7 @@
 }
 
 /* ─── Page Title ─────────────────────────────────────────────────────── */
-.faculty-assignment-container h2 {
+.faculty-submissions-container h2 {
   font-family: var(--font-display);
   font-size: 2rem;
   font-weight: 400;
@@ -62,7 +62,7 @@
   position: relative;
 }
 
-.faculty-assignment-container h2::before {
+.faculty-submissions-container h2::before {
   content: '';
   position: absolute;
   left: 0;
@@ -73,21 +73,35 @@
   border-radius: 99px;
 }
 
-/* ─── Assignment Cards Grid ──────────────────────────────────────────── */
-.faculty-assignment-list {
+/* ─── Submissions Count ──────────────────────────────────────────────── */
+.submissions-count {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  /* color: var(--text-muted); */
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 4px 12px;
+  margin-bottom: 20px;
+}
+
+/* ─── Submissions Grid ───────────────────────────────────────────────── */
+.faculty-submissions-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   gap: 18px;
 }
 
-/* ─── Individual Assignment Card ─────────────────────────────────────── */
-.faculty-assignment-card {
+/* ─── Submission Card ────────────────────────────────────────────────── */
+.submission-card {
   position: relative;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 22px 24px;
-  cursor: pointer;
   overflow: hidden;
   transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
               box-shadow 0.2s ease,
@@ -95,14 +109,13 @@
   animation: cardReveal 0.35s ease both;
 }
 
-.faculty-assignment-card:nth-child(1) { animation-delay: 0.04s; }
-.faculty-assignment-card:nth-child(2) { animation-delay: 0.08s; }
-.faculty-assignment-card:nth-child(3) { animation-delay: 0.12s; }
-.faculty-assignment-card:nth-child(4) { animation-delay: 0.16s; }
-.faculty-assignment-card:nth-child(5) { animation-delay: 0.20s; }
-.faculty-assignment-card:nth-child(n+6) { animation-delay: 0.24s; }
+.submission-card:nth-child(1) { animation-delay: 0.04s; }
+.submission-card:nth-child(2) { animation-delay: 0.08s; }
+.submission-card:nth-child(3) { animation-delay: 0.12s; }
+.submission-card:nth-child(4) { animation-delay: 0.16s; }
+.submission-card:nth-child(n+5) { animation-delay: 0.20s; }
 
-.faculty-assignment-card::before {
+.submission-card::before {
   content: '';
   position: absolute;
   left: 0;
@@ -111,78 +124,120 @@
   width: 3px;
   background: linear-gradient(180deg, var(--accent), var(--accent-dark));
   border-radius: 0 2px 2px 0;
-  opacity: 0;
-  transform: scaleY(0.4);
-  transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.faculty-assignment-card:hover {
-  transform: translateY(-4px);
+.submission-card:hover {
+  transform: translateY(-3px);
   box-shadow: var(--shadow-lg);
-  border-color: rgba(59, 91, 219, 0.3);
+  border-color: rgba(59, 91, 219, 0.28);
 }
 
-.faculty-assignment-card:hover::before {
-  opacity: 1;
-  transform: scaleY(1);
-}
-
-.faculty-assignment-card:active {
-  transform: translateY(-1px);
-}
-
-/* ─── Card Header (title + arrow) ────────────────────────────────────── */
-.faculty-assignment-card-header {
+/* ─── Card Header — Student Info ─────────────────────────────────────── */
+.submission-card-header {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 14px;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
   padding-bottom: 14px;
   border-bottom: 1px solid var(--border);
 }
 
-.faculty-assignment-card h4 {
-  font-size: 1rem;
+.submission-avatar {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 50%;
+  background: var(--accent-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--accent-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.submission-student-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.submission-student-name {
+  font-size: 0.95rem;
   font-weight: 600;
   color: var(--text-primary);
+  margin: 0 0 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.submission-student-email {
+  font-size: 0.8rem;
+  /* color: var(--text-muted); */
   margin: 0;
-  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.faculty-assignment-card-arrow {
-  color: var(--text-muted);
-  font-size: 1rem;
+/* ─── Grade Badge (top-right) ────────────────────────────────────────── */
+.submission-grade-badge {
   flex-shrink: 0;
-  margin-top: 2px;
-  transition: color 0.18s, transform 0.18s;
+  background: var(--success-light);
+  color: var(--success);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 4px 12px;
+  border-radius: 99px;
+  border: 1px solid rgba(47, 158, 68, 0.2);
 }
 
-.faculty-assignment-card:hover .faculty-assignment-card-arrow {
-  color: var(--accent);
-  transform: translateX(3px);
+.submission-grade-badge.ungraded {
+  background: var(--bg-subtle);
+  /* color: var(--text-muted); */
+  border-color: var(--border);
 }
 
-/* ─── Description ────────────────────────────────────────────────────── */
-.faculty-assignment-card-desc {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  margin: 0 0 16px;
-  line-height: 1.6;
+/* ─── Answer Block ───────────────────────────────────────────────────── */
+.submission-answer {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+
+.submission-answer-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  /* color: var(--text-muted); */
+  margin-bottom: 6px;
+}
+
+.submission-answer-text {
+  font-size: 0.88rem;
+  /* color: var(--text-secondary); */
+  line-height: 1.65;
+  margin: 0;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-/* ─── Meta Info Rows ─────────────────────────────────────────────────── */
-.faculty-assignment-card-meta {
+/* ─── Meta Rows ──────────────────────────────────────────────────────── */
+.submission-meta {
   display: flex;
   flex-direction: column;
   gap: 0;
 }
 
-.faculty-assignment-card-meta-row {
+.submission-meta-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -191,82 +246,52 @@
   font-size: 0.85rem;
 }
 
-.faculty-assignment-card-meta-row:last-child {
+.submission-meta-row:last-child {
   border-bottom: none;
   padding-bottom: 0;
 }
 
-.faculty-assignment-card-meta-row .meta-label {
-  font-size: 0.7rem;
+.submission-meta-row .meta-label {
+  font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  /* color: var(--text-muted); */
 }
 
-.faculty-assignment-card-meta-row .meta-value {
+.submission-meta-row .meta-value {
   font-weight: 500;
   color: var(--text-secondary);
   font-size: 0.85rem;
 }
 
-/* ─── Status Badge ───────────────────────────────────────────────────── */
-.assignment-status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.72rem;
+/* ─── Feedback Block ─────────────────────────────────────────────────── */
+.submission-feedback {
+  margin-top: 14px;
+  padding: 12px 16px;
+  background: var(--warning-light);
+  border: 1px solid rgba(230, 119, 0, 0.2);
+  border-radius: var(--radius-md);
+}
+
+.submission-feedback-label {
+  font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  padding: 3px 10px;
-  border-radius: 99px;
+  color: var(--warning);
+  margin-bottom: 5px;
 }
 
-.assignment-status-badge::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-}
-
-.assignment-status-badge.status-published {
-  background: var(--success-light);
-  color: var(--success);
-}
-.assignment-status-badge.status-published::before {
-  background: var(--success);
-}
-
-.assignment-status-badge.status-draft {
-  background: var(--bg-subtle);
-  color: var(--text-muted);
-  border: 1px solid var(--border);
-}
-.assignment-status-badge.status-draft::before {
-  background: var(--text-muted);
-}
-
-.assignment-status-badge.status-closed {
-  background: var(--danger-light);
-  color: var(--danger);
-}
-.assignment-status-badge.status-closed::before {
-  background: var(--danger);
-}
-
-.assignment-status-badge.status-active {
-  background: var(--accent-light);
-  color: var(--accent-dark);
-}
-.assignment-status-badge.status-active::before {
-  background: var(--accent);
-  box-shadow: 0 0 0 2px var(--accent-light);
-  animation: pulse 1.6s ease infinite;
+.submission-feedback-text {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.6;
 }
 
 /* ─── Empty State ────────────────────────────────────────────────────── */
-.faculty-assignment-empty {
+.faculty-submissions-empty {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -281,14 +306,14 @@
   border-radius: var(--radius-lg);
 }
 
-.faculty-assignment-empty::before {
-  content: '📋';
+.faculty-submissions-empty::before {
+  content: '📭';
   font-size: 2.4rem;
   font-style: normal;
 }
 
 /* ─── Loading State ──────────────────────────────────────────────────── */
-.faculty-assignment-loading {
+.faculty-submissions-loading {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -299,7 +324,7 @@
   gap: 10px;
 }
 
-.faculty-assignment-loading::before {
+.faculty-submissions-loading::before {
   content: '';
   width: 18px;
   height: 18px;
@@ -319,25 +344,20 @@
   to { transform: rotate(360deg); }
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.4; }
-}
-
 /* ─── Responsive ─────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .faculty-assignment-container {
+  .faculty-submissions-container {
     padding: 24px 18px;
   }
 
-  .faculty-assignment-list {
+  .faculty-submissions-list {
     grid-template-columns: 1fr 1fr;
     gap: 14px;
   }
 }
 
 @media (max-width: 480px) {
-  .faculty-assignment-list {
+  .faculty-submissions-list {
     grid-template-columns: 1fr;
   }
 }

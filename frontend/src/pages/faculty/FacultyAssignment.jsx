@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import "../../styles/FacultyAssignment.css";
 
 export default function Assignments() {
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAssignments = async () => {
@@ -20,11 +23,7 @@ export default function Assignments() {
           }
         );
 
-        console.log("DATA:", res.data); // 👈 keep this for sanity
-
-        // ✅ ensure it's always an array
         setAssignments(Array.isArray(res.data) ? res.data : []);
-
       } catch (err) {
         console.error(err);
         alert("Failed to load assignments");
@@ -36,43 +35,56 @@ export default function Assignments() {
     fetchAssignments();
   }, []);
 
-  if (loading) return <p>Loading assignments...</p>;
+  if (loading) return <p className="faculty-assignment-loading">Loading assignments...</p>;
 
   return (
     <div className="faculty-assignment-container">
       <h2>All Assignments</h2>
 
       {assignments.length === 0 ? (
-        <p>No assignments found</p>
+        <p className="faculty-assignment-empty">No assignments found</p>
       ) : (
-        assignments.map((a) => (
-          <div
-            key={a._id}
-            style={{
-              border: "1px solid #ccc",
-              padding: "10px",
-              margin: "10px 0",
-              borderRadius: "8px",
-            }}
-          >
-            <h4>{a.title}</h4>
-            <p>{a.description}</p>
+        <div className="faculty-assignment-list">
+          {assignments.map((a) => (
+            <div
+              key={a._id}
+              className="faculty-assignment-card"
+              onClick={() => navigate(`/faculty/assignment/${a._id}/submissions`)}
+            >
+              <div className="faculty-assignment-card-header">
+                <h4>{a.title}</h4>
+                <span className="faculty-assignment-card-arrow">→</span>
+              </div>
 
-            <p>
-              <strong>Course:</strong>{" "}
-              {a.course?.title || a.courseName || "Unknown"}
-            </p>
+              <p className="faculty-assignment-card-desc">
+                {a.description}
+              </p>
 
-            <p>
-              <strong>Due:</strong>{" "}
-              {new Date(a.dueAt).toLocaleString()}
-            </p>
+              <div className="faculty-assignment-card-meta">
+                <div className="faculty-assignment-card-meta-row">
+                  <span className="meta-label">Course</span>
+                  <span className="meta-value">
+                    {a.course?.title || a.courseName || "Unknown"}
+                  </span>
+                </div>
 
-            <p>
-              <strong>Status:</strong> {a.status}
-            </p>
-          </div>
-        ))
+                <div className="faculty-assignment-card-meta-row">
+                  <span className="meta-label">Due</span>
+                  <span className="meta-value">
+                    {new Date(a.dueAt).toLocaleString()}
+                  </span>
+                </div>
+
+                <div className="faculty-assignment-card-meta-row">
+                  <span className="meta-label">Status</span>
+                  <span className={`assignment-status-badge status-${a.status}`}>
+                    {a.status}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

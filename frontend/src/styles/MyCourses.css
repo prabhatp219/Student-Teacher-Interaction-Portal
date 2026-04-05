@@ -1,106 +1,322 @@
-/* ============================= */
-/* DASHBOARD WRAPPER */
-/* ============================= */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap');
 
-.fct-dashboard-wrapper {
-  padding: 40px;
-  width: 100%;
-  box-sizing: border-box;
+/* ─── Design Tokens (shared with CourseDetails) ─────────────────────── */
+:root {
+  --bg-page:        #f0f2f5;
+  --bg-card:        #ffffff;
+  --bg-subtle:      #f7f8fa;
+  --bg-hover:       #f0f4ff;
+
+  --accent:         #3b5bdb;
+  --accent-light:   #e8edff;
+  --accent-dark:    #2f4ac7;
+
+  --text-primary:   #1a1d23;
+  --text-secondary: #5a6072;
+  --text-muted:     #9aa0b4;
+
+  --border:         #e3e6ee;
+  --border-strong:  #c8cdd9;
+  --radius-sm:      6px;
+  --radius-md:      10px;
+  --radius-lg:      16px;
+
+  --shadow-xs: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.07);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.09);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.11);
+
+  --font-body:    'DM Sans', sans-serif;
+  --font-display: 'DM Serif Display', serif;
 }
 
-/* ============================= */
-/* HEADER */
-/* ============================= */
+/* ─── Wrapper ────────────────────────────────────────────────────────── */
+.fct-dashboard-wrapper {
+  padding: 40px 48px;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  font-family: var(--font-body);
+  min-height: 100vh;
+}
 
+/* ─── Header ─────────────────────────────────────────────────────────── */
 .fct-header-section {
-  text-align: left;  /* Changed from center */
-  margin-bottom: 40px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 20px;
+  margin-bottom: 32px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
 }
 
 .fct-main-title {
+  font-family: var(--font-display);
   font-size: 2rem;
-  color: #2c3e50;
-  font-weight: 500;
+  font-weight: 400;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+  position: relative;
+  padding-left: 18px;
 }
 
-/* ============================= */
-/* GRID */
-/* ============================= */
+.fct-main-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 4px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-dark));
+  border-radius: 99px;
+}
 
+/* ─── Course Count Badge ─────────────────────────────────────────────── */
+.fct-course-count {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 5px 14px;
+  align-self: center;
+}
+
+/* ─── Grid ───────────────────────────────────────────────────────────── */
 .fct-course-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 30px;
+  gap: 20px;
   width: 100%;
 }
 
-/* ============================= */
-/* COURSE CARD */
-/* ============================= */
-
+/* ─── Course Card ────────────────────────────────────────────────────── */
 .fct-course-card-item {
-  background: #ffffff;
-  border: 1px solid #e1e8ed;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 26px;
+  box-shadow: var(--shadow-xs);
   cursor: pointer;
-  width: 100%;
-  box-sizing: border-box;
+  overflow: hidden;
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.2s ease,
+              border-color 0.2s ease;
+  animation: cardReveal 0.35s ease both;
+}
+
+/* staggered entrance for cards */
+.fct-course-card-item:nth-child(1) { animation-delay: 0.04s; }
+.fct-course-card-item:nth-child(2) { animation-delay: 0.08s; }
+.fct-course-card-item:nth-child(3) { animation-delay: 0.12s; }
+.fct-course-card-item:nth-child(4) { animation-delay: 0.16s; }
+.fct-course-card-item:nth-child(5) { animation-delay: 0.20s; }
+.fct-course-card-item:nth-child(6) { animation-delay: 0.24s; }
+.fct-course-card-item:nth-child(n+7) { animation-delay: 0.28s; }
+
+/* Accent bar — always visible, expands on hover */
+.fct-course-card-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-dark));
+  border-radius: 0 2px 2px 0;
+  opacity: 0;
+  transform: scaleY(0.4);
+  transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Subtle shimmer top edge */
+.fct-course-card-item::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent-light), transparent);
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 
 .fct-course-card-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-  border-color: #3498db;
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(59, 91, 219, 0.35);
 }
 
-/* ============================= */
-/* CARD CONTENT */
-/* ============================= */
+.fct-course-card-item:hover::before {
+  opacity: 1;
+  transform: scaleY(1);
+}
 
+.fct-course-card-item:hover::after {
+  opacity: 1;
+}
+
+.fct-course-card-item:active {
+  transform: translateY(-1px);
+}
+
+/* ─── Card Heading ───────────────────────────────────────────────────── */
 .fct-card-heading {
-  font-size: 1.3rem;
-  color: #333;
-  margin: 0 0 15px 0;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #f5f5f5;
+  font-family: var(--font-body);
+  font-size: 1.05rem;
   font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+  line-height: 1.4;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* Arrow icon on heading */
+.fct-card-heading::after {
+  content: '→';
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: color 0.18s, transform 0.18s;
+  margin-top: 1px;
+}
+
+.fct-course-card-item:hover .fct-card-heading::after {
+  color: var(--accent);
+  transform: translateX(3px);
+}
+
+/* ─── Card Details ───────────────────────────────────────────────────── */
+.fct-card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
 .fct-card-details p {
   display: flex;
   justify-content: space-between;
-  margin: 10px 0;
-  font-size: 0.95rem;
-  color: #444;
+  align-items: center;
+  margin: 0;
+  padding: 9px 0;
+  font-size: 0.87rem;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--bg-subtle);
+}
+
+.fct-card-details p:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 .fct-card-details p span {
-  color: #888;
-  font-weight: 400;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
 }
 
-/* ============================= */
-/* EMPTY / STATUS STATE */
-/* ============================= */
+.fct-card-details p strong {
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+}
 
-.fct-status-msg,
+/* Semester pill */
+.fct-card-details p:last-child strong {
+  background: var(--accent-light);
+  color: var(--accent-dark);
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 2px 10px;
+  border-radius: 99px;
+}
+
+/* ─── Empty State ────────────────────────────────────────────────────── */
 .fct-empty-state {
-  text-align: left;
-  padding: 40px 0;
-  font-size: 1.1rem;
-  color: #95a5a6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-style: italic;
+  gap: 12px;
+  background: var(--bg-card);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
 }
 
-/* ============================= */
-/* RESPONSIVE */
-/* ============================= */
+.fct-empty-state::before {
+  content: '📚';
+  font-size: 2.4rem;
+  font-style: normal;
+}
 
+/* ─── Loading State ──────────────────────────────────────────────────── */
+.fct-status-msg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--accent);
+  gap: 10px;
+}
+
+.fct-status-msg::before {
+  content: '';
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--accent-light);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+/* ─── Keyframes ──────────────────────────────────────────────────────── */
+@keyframes cardReveal {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
+  .fct-dashboard-wrapper {
+    padding: 24px 18px;
+  }
+
+  .fct-course-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .fct-main-title {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 480px) {
   .fct-course-grid {
     grid-template-columns: 1fr;
   }
