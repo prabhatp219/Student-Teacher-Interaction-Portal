@@ -13,7 +13,7 @@ export default function FacultySubmissions() {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          `http://localhost:5000/api/v1/submissions/assignment/${id}`,
+          `/submissions/assignment/${id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setSubs(res.data);

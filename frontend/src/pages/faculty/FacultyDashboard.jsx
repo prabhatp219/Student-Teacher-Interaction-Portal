@@ -18,14 +18,14 @@ const FacultyDashboard = () => {
 
         // Get logged-in faculty info
         const meRes = await axios.get(
-          "http://localhost:5000/api/v1/auth/me",
+          "/auth/me",
           { headers }
         );
         setFacultyName(meRes.data.name);
 
         // Get faculty dashboard stats
         const dashboardRes = await axios.get(
-          "http://localhost:5000/api/v1/faculty/dashboard",
+          "/faculty/dashboard",
           { headers }
         );
         setStats(dashboardRes.data);

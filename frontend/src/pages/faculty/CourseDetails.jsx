@@ -21,7 +21,7 @@ const CourseDetails = () => {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        `http://localhost:5000/api/v1/courses/${id}`,
+        `/courses/${id}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -45,7 +45,7 @@ const CourseDetails = () => {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        `http://localhost:5000/api/v1/assignments/course/${id}`,
+        `/assignments/course/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -79,7 +79,7 @@ const CourseDetails = () => {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        `http://localhost:5000/api/v1/assignments/course/${id}`,
+        `/assignments/course/${id}`,
         {
           method: "POST",
           headers: {

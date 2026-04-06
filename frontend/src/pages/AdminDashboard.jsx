@@ -23,7 +23,7 @@ export default function AdminDashboard() {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        "http://localhost:5000/api/v1/admin/create-user",
+        "/admin/create-user",
         {
           method: "POST",
           headers: {

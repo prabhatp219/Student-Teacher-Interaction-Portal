@@ -16,7 +16,7 @@ const StudentAssignments = () => {
       const token = localStorage.getItem("token");
 
       const res = await axios.get(
-        "http://localhost:5000/api/v1/assignments/student",
+        "/assignments/student",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -40,7 +40,7 @@ const StudentAssignments = () => {
       const token = localStorage.getItem("token");
 
       await axios.post(
-        `http://localhost:5000/api/v1/submissions/assignment/${assignmentId}`,
+        `/submissions/assignment/${assignmentId}`,
         { answer },
         {
           headers: { Authorization: `Bearer ${token}` },

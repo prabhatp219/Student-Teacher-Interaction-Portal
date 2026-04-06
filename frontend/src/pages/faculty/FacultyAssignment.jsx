@@ -15,7 +15,7 @@ export default function Assignments() {
         const token = localStorage.getItem("token");
 
         const res = await axios.get(
-          "http://localhost:5000/api/v1/assignments",
+          "/assignments",
           {
             headers: {
               Authorization: `Bearer ${token}`,
