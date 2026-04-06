@@ -11,7 +11,7 @@ const StudentCourses = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "/student/courses",
+          "http://localhost:5000/api/v1/student/courses",
           {
             headers: { Authorization: `Bearer ${token}` },
           }

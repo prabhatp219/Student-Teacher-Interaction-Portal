@@ -18,14 +18,14 @@ const FacultyDashboard = () => {
 
         // Get logged-in faculty info
         const meRes = await axios.get(
-          "/auth/me",
+          "http://localhost:5000/api/v1/auth/me",
           { headers }
         );
         setFacultyName(meRes.data.name);
 
         // Get faculty dashboard stats
         const dashboardRes = await axios.get(
-          "/faculty/dashboard",
+          "http://localhost:5000/api/v1/faculty/dashboard",
           { headers }
         );
         setStats(dashboardRes.data);
@@ -37,7 +37,7 @@ const FacultyDashboard = () => {
     fetchFacultyData();
   }, []);
 
-  const firstName = facultyName?.split(" ")[0] || "Faculty";
+  const firstName = facultyName.split(" ")[0] || "Faculty";
 
   return (
     <div className="faculty-db">

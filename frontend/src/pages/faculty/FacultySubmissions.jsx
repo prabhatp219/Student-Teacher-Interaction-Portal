@@ -13,7 +13,7 @@ export default function FacultySubmissions() {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          `/submissions/assignment/${id}`,
+          `http://localhost:5000/api/v1/submissions/assignment/${id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setSubs(res.data);
@@ -28,7 +28,7 @@ export default function FacultySubmissions() {
   }, [id]);
 
   const getInitials = (name = "") =>
-    name?.split(" ")?.slice(0, 2)?.map((n) => n[0])?.join("");
+    name.split(" ").slice(0, 2).map((n) => n[0]).join("");
 
   if (loading)
     return <p className="faculty-submissions-loading">Loading submissions...</p>;

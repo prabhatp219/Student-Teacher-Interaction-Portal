@@ -31,10 +31,10 @@ const StudentDashboard = () => {
         const token = localStorage.getItem("token");
         const headers = { Authorization: `Bearer ${token}` };
         
-        const meRes = await axios.get("/auth/me", { headers });
+        const meRes = await axios.get("http://localhost:5000/api/v1/auth/me", { headers });
         setStudentName(meRes.data.name);
         
-        const dashboardRes = await axios.get("/student/dashboard", { headers });
+        const dashboardRes = await axios.get("http://localhost:5000/api/v1/student/dashboard", { headers });
         setStats(dashboardRes.data);
       } catch (err) {
         console.error("Student dashboard error:", err);
@@ -49,7 +49,7 @@ const StudentDashboard = () => {
         <header className="header">
           <div>
             <h1 className="greeting-text">
-              Hello, {studentName?.split(' ')[0] || "Student"} ✨
+              Hello, {studentName.split(' ')[0] || "Student"} ✨
             </h1>
             <p className="subtext">It's a great day to learn something new.</p>
           </div>
