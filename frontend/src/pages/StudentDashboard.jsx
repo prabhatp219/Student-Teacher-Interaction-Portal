@@ -49,7 +49,7 @@ const StudentDashboard = () => {
         <header className="header">
           <div>
             <h1 className="greeting-text">
-              Hello, {studentName.split(' ')[0] || "Student"} ✨
+              Hello, {studentName?.split(' ')[0] || "Student"} ✨
             </h1>
             <p className="subtext">It's a great day to learn something new.</p>
           </div>

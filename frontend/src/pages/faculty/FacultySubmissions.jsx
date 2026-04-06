@@ -28,7 +28,7 @@ export default function FacultySubmissions() {
   }, [id]);
 
   const getInitials = (name = "") =>
-    name.split(" ").slice(0, 2).map((n) => n[0]).join("");
+    name?.split(" ")?.slice(0, 2)?.map((n) => n[0])?.join("");
 
   if (loading)
     return <p className="faculty-submissions-loading">Loading submissions...</p>;

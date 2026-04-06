@@ -37,7 +37,7 @@ const FacultyDashboard = () => {
     fetchFacultyData();
   }, []);
 
-  const firstName = facultyName.split(" ")[0] || "Faculty";
+  const firstName = facultyName?.split(" ")[0] || "Faculty";
 
   return (
     <div className="faculty-db">
