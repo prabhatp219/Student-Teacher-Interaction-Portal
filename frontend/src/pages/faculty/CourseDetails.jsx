@@ -1,15 +1,15 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "../../styles/CourseDetails.css";
+import { api } from "../../utils/api"; // adjust path if needed
 
 const CourseDetails = () => {
   const { id } = useParams();
 
   const [course, setCourse] = useState(null);
-  const [assignments, setAssignments] = useState([]); // ✅ NEW
+  const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // assignment form states
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -18,45 +18,32 @@ const CourseDetails = () => {
   // ✅ FETCH COURSE
   const fetchCourse = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const res = await api.get(`/courses/${id}`);
 
-      const res = await fetch(
-        `http://localhost:5000/api/v1/courses/${id}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      console.log("COURSE:", res.data);
 
-      if (!res.ok) throw new Error("Failed to fetch course");
-
-      const data = await res.json();
-      setCourse(data);
+      setCourse(res.data.course || res.data);
     } catch (err) {
-      console.error("Error fetching course:", err);
+      console.error(
+        "Error fetching course:",
+        err.response?.data || err.message
+      );
     }
   };
 
   // ✅ FETCH ASSIGNMENTS
   const fetchAssignments = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const res = await api.get(`/assignments/course/${id}`);
 
-      const res = await fetch(
-        `http://localhost:5000/api/v1/assignments/course/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      console.log("COURSE ASSIGNMENTS:", res.data);
 
-      const data = await res.json();
-      setAssignments(data);
+      setAssignments(res.data.assignments || res.data || []);
     } catch (err) {
-      console.error("Error fetching assignments:", err);
+      console.error(
+        "Error fetching assignments:",
+        err.response?.data || err.message
+      );
     }
   };
 
@@ -76,33 +63,18 @@ const CourseDetails = () => {
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem("token");
+      await api.post(`/assignments/course/${id}`, {
+        title,
+        description,
+        dueAt: new Date(dueDate),
+        maxMarks: 100,
+        allowLate: false,
+        latePenaltyPercent: 0,
+        status: "draft",
+      });
 
-      const res = await fetch(
-        `http://localhost:5000/api/v1/assignments/course/${id}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            title,
-            description,
-            dueAt: new Date(dueDate),
-            maxMarks: 100,
-            allowLate: false,
-            latePenaltyPercent: 0,
-            status: "draft",
-          }),
-        }
-      );
+      await fetchAssignments();
 
-      if (!res.ok) throw new Error("Failed to create assignment");
-
-      await fetchAssignments(); // 🔥 refresh list
-
-      // reset form
       setTitle("");
       setDescription("");
       setDueDate("");
@@ -110,7 +82,7 @@ const CourseDetails = () => {
 
       alert("Assignment created successfully!");
     } catch (err) {
-      console.error(err);
+      console.error(err.response?.data || err.message);
       alert("Error creating assignment");
     }
   };
@@ -126,23 +98,21 @@ const CourseDetails = () => {
       <h2 className="course-details-title">{course.title}</h2>
 
       <div className="course-details-info">
-        <p><strong style={{color:"black"}}>Code:</strong>{" "}<span style={{ color: "black" }}>{course.code || "Not set"}</span></p>
-        <p><strong style={{color:"black"}}>Department:</strong>{" "}<span style={{ color: "black" }}>{course.department || "Not set"}</span></p>
-        <p><strong style={{color:"black"}}>Semester:</strong>{" "}<span style={{ color: "black" }}>{course.semester || "Not set"}</span></p>
-        <p><strong style={{color:"black"}}>Description:</strong>{" "}<span style={{ color: "black" }}>{course.description || "Not set"}</span></p>
+        <p><strong>Code:</strong> {course.code || "Not set"}</p>
+        <p><strong>Department:</strong> {course.department || "Not set"}</p>
+        <p><strong>Semester:</strong> {course.semester || "Not set"}</p>
+        <p><strong>Description:</strong> {course.description || "Not set"}</p>
       </div>
 
       <hr className="course-details-divider" />
 
-      {/* ✅ FACULTY (UNCHANGED) */}
+      {/* Faculty */}
       <section className="course-details-section">
         <h3>Faculties</h3>
-        {course.faculty && course.faculty.length > 0 ? (
+        {course.faculty?.length ? (
           <ul className="course-details-list">
             {course.faculty.map((f) => (
-              <li key={f._id}>
-                {f.name} ({f.email})
-              </li>
+              <li key={f._id}>{f.name} ({f.email})</li>
             ))}
           </ul>
         ) : (
@@ -152,15 +122,13 @@ const CourseDetails = () => {
 
       <hr className="course-details-divider" />
 
-      {/* ✅ STUDENTS (UNCHANGED) */}
+      {/* Students */}
       <section className="course-details-section">
         <h3>Students Enrolled</h3>
-        {course.students && course.students.length > 0 ? (
+        {course.students?.length ? (
           <ul className="course-details-list">
-            {course.students.map((student) => (
-              <li key={student._id}>
-                {student.name} ({student.email})
-              </li>
+            {course.students.map((s) => (
+              <li key={s._id}>{s.name} ({s.email})</li>
             ))}
           </ul>
         ) : (
@@ -170,7 +138,7 @@ const CourseDetails = () => {
 
       <hr className="course-details-divider" />
 
-      {/* ✅ ASSIGNMENTS (FIXED PART) */}
+      {/* Assignments */}
       <section className="course-details-section">
         <h3>Assignments</h3>
 
@@ -182,61 +150,37 @@ const CourseDetails = () => {
         </button>
 
         {showForm && (
-          <form
-            className="course-details-form"
-            onSubmit={handleCreateAssignment}
-          >
+          <form className="course-details-form" onSubmit={handleCreateAssignment}>
             <div className="course-details-form-group">
               <label>Title</label>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-              />
+              <input value={title} onChange={(e) => setTitle(e.target.value)} required />
             </div>
 
             <div className="course-details-form-group">
-              <label>Description / Question</label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-              />
+              <label>Description</label>
+              <textarea value={description} onChange={(e) => setDescription(e.target.value)} required />
             </div>
 
             <div className="course-details-form-group">
               <label>Due Date</label>
-              <input
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                required
-              />
+              <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} required />
             </div>
 
             <div className="course-details-form-actions">
               <button type="submit">Create</button>
-              <button type="button" onClick={() => setShowForm(false)}>
-                Cancel
-              </button>
+              <button type="button" onClick={() => setShowForm(false)}>Cancel</button>
             </div>
           </form>
         )}
 
-        {/* ✅ SHOW ASSIGNMENTS */}
         {assignments.length === 0 ? (
-          <p className="course-details-placeholder">
-            No assignments yet.
-          </p>
+          <p>No assignments yet.</p>
         ) : (
           assignments.map((a) => (
             <div key={a._id} className="assignment-card">
               <h4>{a.title}</h4>
               <p>{a.description}</p>
-              <p>
-                Due: {new Date(a.dueAt).toLocaleDateString()}
-              </p>
+              <p>Due: {new Date(a.dueAt).toLocaleDateString()}</p>
             </div>
           ))
         )}
