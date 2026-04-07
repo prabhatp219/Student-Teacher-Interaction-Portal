@@ -12,7 +12,7 @@ export default function MyCourses() {
     const fetchCourses = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/v1/courses/my/faculty", {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/courses/my/faculty`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
