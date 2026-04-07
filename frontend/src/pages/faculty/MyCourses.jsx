@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import "../../styles/MyCourses.css";
+import { api } from "../../utils/api";
 
 export default function MyCourses() {
   const [courses, setCourses] = useState([]);
@@ -11,27 +11,24 @@ export default function MyCourses() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/courses/my/faculty`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await api.get("/courses/my/faculty");
 
-        if (Array.isArray(res.data)) {
-          setCourses(res.data);
-        } else {
-          setCourses([]);
-        }
+        console.log("COURSES:", res.data);
+
+        setCourses(res.data.courses || res.data || []);
       } catch (err) {
-        console.error("MyCourses error:", err);
+        console.error("MyCourses error:", err.response?.data || err.message);
         setCourses([]);
       } finally {
         setLoading(false);
       }
     };
+
     fetchCourses();
   }, []);
 
-  if (loading) return <div className="fct-status-msg">Loading assigned courses...</div>;
+  if (loading)
+    return <div className="fct-status-msg">Loading assigned courses...</div>;
 
   return (
     <div className="fct-dashboard-wrapper">
@@ -40,7 +37,9 @@ export default function MyCourses() {
       </header>
 
       {courses.length === 0 ? (
-        <p className="fct-empty-state">No courses have been assigned to you yet.</p>
+        <p className="fct-empty-state">
+          No courses have been assigned to you yet.
+        </p>
       ) : (
         <div className="fct-course-grid">
           {courses.map((course) => (
@@ -61,4 +60,4 @@ export default function MyCourses() {
       )}
     </div>
   );
-}   
+}

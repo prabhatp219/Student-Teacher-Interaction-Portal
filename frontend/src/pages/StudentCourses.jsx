@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import "../styles/StudentCourses.css";
+import { api } from "../utils/api"; // adjust path if needed
 
 const StudentCourses = () => {
   const [courses, setCourses] = useState([]);
@@ -9,16 +9,16 @@ const StudentCourses = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get(
-          "http://localhost:5000/api/v1/student/courses",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setCourses(res.data || []);
+        const res = await api.get("/student/courses");
+
+        console.log("STUDENT COURSES:", res.data);
+
+        setCourses(res.data.courses || res.data || []);
       } catch (err) {
-        console.error("Courses error:", err);
+        console.error(
+          "Courses error:",
+          err.response?.data || err.message
+        );
       } finally {
         setLoading(false);
       }
@@ -37,7 +37,7 @@ const StudentCourses = () => {
         <p>No courses enrolled yet.</p>
       ) : (
         <div className="student-courses-grid">
-          {courses.map(course => (
+          {courses.map((course) => (
             <div className="student-course-card" key={course._id}>
               <h3>{course.title}</h3>
               <p>{course.description}</p>

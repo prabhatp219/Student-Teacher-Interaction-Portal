@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../../styles/FacultyAssignment.css";
+import { api } from "../../utils/api";
 
 export default function Assignments() {
   const [assignments, setAssignments] = useState([]);
@@ -12,20 +12,13 @@ export default function Assignments() {
   useEffect(() => {
     const fetchAssignments = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const res = await api.get("/assignments");
 
-        const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}/v1/assignments`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        console.log("ASSIGNMENTS:", res.data);
 
-        setAssignments(Array.isArray(res.data) ? res.data : []);
+        setAssignments(res.data.assignments || res.data || []);
       } catch (err) {
-        console.error(err);
+        console.error(err.response?.data || err.message);
         alert("Failed to load assignments");
       } finally {
         setLoading(false);

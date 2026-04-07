@@ -1,6 +1,7 @@
 // src/pages/AdminDashboard.jsx
 import "../styles/admin.css";
 import { useState } from "react";
+import { api } from "../utils/api"; // adjust path if needed
 
 export default function AdminDashboard() {
   const [form, setForm] = useState({
@@ -20,31 +21,25 @@ export default function AdminDashboard() {
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem("token");
+      const res = await api.post("/admin/create-user", form);
 
-      const res = await fetch(
-        "http://localhost:5000/api/v1/admin/create-user",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(form),
-        }
+      console.log("CREATE USER RESPONSE:", res.data);
+
+      alert("User created successfully");
+
+      setForm({
+        name: "",
+        email: "",
+        password: "",
+        role: "student",
+      });
+    } catch (err) {
+      console.error(
+        "Create user error:",
+        err.response?.data || err.message
       );
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.msg || "Failed");
-        return;
-      }
-
-      alert("User created");
-      setForm({ name: "", email: "", password: "", role: "student" });
-    } catch {
-      alert("Server error");
+      alert(err.response?.data?.msg || "Failed to create user");
     }
   };
 

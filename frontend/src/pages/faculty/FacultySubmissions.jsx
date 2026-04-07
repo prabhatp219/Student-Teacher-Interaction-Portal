@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useParams } from "react-router-dom";
 import "../../styles/FacultySubmissions.css";
+import { api } from "../../utils/api";
 
 export default function FacultySubmissions() {
   const { id } = useParams();
@@ -11,19 +11,19 @@ export default function FacultySubmissions() {
   useEffect(() => {
     const fetchSubmissions = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get(
-          `http://localhost:5000/api/v1/submissions/assignment/${id}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setSubs(res.data);
+        const res = await api.get(`/submissions/assignment/${id}`);
+
+        console.log("SUBMISSIONS:", res.data);
+
+        setSubs(res.data.submissions || res.data || []);
       } catch (err) {
-        console.error(err);
+        console.error(err.response?.data || err.message);
         alert("Failed to load submissions");
       } finally {
         setLoading(false);
       }
     };
+
     fetchSubmissions();
   }, [id]);
 

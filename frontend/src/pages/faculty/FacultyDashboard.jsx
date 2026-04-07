@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import "../../styles/FacultyDashboard.css";
+import { api } from "../../utils/api";
 
 const FacultyDashboard = () => {
   const [facultyName, setFacultyName] = useState("");
@@ -13,24 +13,22 @@ const FacultyDashboard = () => {
   useEffect(() => {
     const fetchFacultyData = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const headers = { Authorization: `Bearer ${token}` };
-
         // Get logged-in faculty info
-        const meRes = await axios.get(
-          "http://localhost:5000/api/v1/auth/me",
-          { headers }
-        );
-        setFacultyName(meRes.data.name);
+        const meRes = await api.get("/auth/me");
+        console.log("ME:", meRes.data);
+
+        setFacultyName(meRes.data.name || "");
 
         // Get faculty dashboard stats
-        const dashboardRes = await axios.get(
-          "http://localhost:5000/api/v1/faculty/dashboard",
-          { headers }
-        );
-        setStats(dashboardRes.data);
+        const dashboardRes = await api.get("/faculty/dashboard");
+        console.log("DASHBOARD:", dashboardRes.data);
+
+        setStats(dashboardRes.data || {});
       } catch (err) {
-        console.error("Faculty dashboard error:", err);
+        console.error(
+          "Faculty dashboard error:",
+          err.response?.data || err.message
+        );
       }
     };
 
@@ -57,7 +55,6 @@ const FacultyDashboard = () => {
       <div className="faculty-grid">
         {/* Left Column */}
         <div className="grid-left">
-          {/* Stats */}
           <div className="stats-container">
             <FacultyStatCard
               icon="📚"
@@ -79,7 +76,6 @@ const FacultyDashboard = () => {
             />
           </div>
 
-          {/* Performance (placeholder, same idea as student chart) */}
           <div className="performance-panel">
             <div className="panel-header">
               <h2>Class Engagement</h2>
@@ -106,7 +102,6 @@ const FacultyDashboard = () => {
 
         {/* Right Column */}
         <div className="grid-right">
-          {/* Actions */}
           <div className="action-panel">
             <h2>Quick Management</h2>
             <div className="action-buttons">
@@ -117,7 +112,6 @@ const FacultyDashboard = () => {
             </div>
           </div>
 
-          {/* Schedule */}
           <div className="upcoming-panel">
             <h2>Today's Schedule</h2>
             <div className="schedule-item">

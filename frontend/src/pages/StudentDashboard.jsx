@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, Cell 
 } from 'recharts';
 import "../styles/StudentDashboard.css";
+import { api } from "../utils/api"; // adjust path if needed
 
-// Mock data for the performance chart
 const performanceData = [
   { name: 'Mon', score: 85 },
   { name: 'Tue', score: 92 },
@@ -28,18 +27,23 @@ const StudentDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const headers = { Authorization: `Bearer ${token}` };
-        
-        const meRes = await axios.get("http://localhost:5000/api/v1/auth/me", { headers });
-        setStudentName(meRes.data.name);
-        
-        const dashboardRes = await axios.get("http://localhost:5000/api/v1/student/dashboard", { headers });
-        setStats(dashboardRes.data);
+        const meRes = await api.get("/auth/me");
+        console.log("ME:", meRes.data);
+
+        setStudentName(meRes.data.name || "");
+
+        const dashboardRes = await api.get("/student/dashboard");
+        console.log("DASHBOARD:", dashboardRes.data);
+
+        setStats(dashboardRes.data || {});
       } catch (err) {
-        console.error("Student dashboard error:", err);
+        console.error(
+          "Student dashboard error:",
+          err.response?.data || err.message
+        );
       }
     };
+
     fetchData();
   }, []);
 
@@ -53,6 +57,7 @@ const StudentDashboard = () => {
             </h1>
             <p className="subtext">It's a great day to learn something new.</p>
           </div>
+
           <div className="profile-section">
             <span className="date-badge">
               {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
@@ -91,31 +96,17 @@ const StudentDashboard = () => {
               <h3 className="card-title">Recent Performance</h3>
               <span className="view-all">View Details</span>
             </div>
-            
-            {/* Functional Chart Implementation */}
-            <div className="chart-container" style={{ width: '100%', height: 250, marginTop: '10px' }}>
+
+            <div className="chart-container" style={{ width: '100%', height: 250 }}>
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={performanceData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <BarChart data={performanceData}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                  <XAxis 
-                    dataKey="name" 
-                    axisLine={false} 
-                    tickLine={false} 
-                    tick={{ fill: '#64748b', fontSize: 12 }} 
-                    dy={10}
-                  />
-                  <YAxis 
-                    axisLine={false} 
-                    tickLine={false} 
-                    tick={{ fill: '#64748b', fontSize: 12 }} 
-                  />
-                  <Tooltip 
-                    cursor={{ fill: '#f8fafc' }}
-                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                  />
-                  <Bar dataKey="score" radius={[6, 6, 0, 0]} barSize={35}>
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} />
+                  <YAxis axisLine={false} tickLine={false} />
+                  <Tooltip />
+                  <Bar dataKey="score" radius={[6, 6, 0, 0]}>
                     {performanceData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={index === 3 ? '#0ea5e9' : '#e0f2fe'} />
+                      <Cell key={index} fill={index === 3 ? '#0ea5e9' : '#e0f2fe'} />
                     ))}
                   </Bar>
                 </BarChart>
