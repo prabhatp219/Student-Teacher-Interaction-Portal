@@ -20,6 +20,7 @@ const UserSchema = new Schema(
     },
 
     isActive: { type: Boolean, default: true },
+    isDemo:   { type: Boolean, default: false },
     lastSeenAt: Date,
   },
   { timestamps: true }

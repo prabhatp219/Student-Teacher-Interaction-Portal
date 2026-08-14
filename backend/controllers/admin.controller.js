@@ -101,3 +101,30 @@ exports.getUsers = async (req, res) => {
     res.status(500).json({ msg: 'Server error' });
   }
 };
+
+exports.deleteUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) return res.status(404).json({ msg: 'User not found' });
+    res.json({ msg: 'User deleted' });
+  } catch (err) {
+    console.error('admin.deleteUser', err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
+
+// Toggles isActive: disables if active, enables if disabled
+exports.toggleUserActive = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ msg: 'User not found' });
+
+    user.isActive = user.isActive === false ? true : false;
+    await user.save();
+
+    res.json({ msg: user.isActive ? 'User enabled' : 'User disabled', isActive: user.isActive });
+  } catch (err) {
+    console.error('admin.toggleUserActive', err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};

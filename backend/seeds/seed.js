@@ -30,7 +30,8 @@ async function main() {
         name: 'Site Admin',
         email: adminEmail,
         passwordHash: hash,
-        role: 'admin'
+        role: 'admin',
+        isDemo: true
       });
       console.log('Created admin:', adminEmail);
     } else {
@@ -46,11 +47,29 @@ async function main() {
         name: 'Test Student',
         email: studentEmail,
         passwordHash: hash,
-        role: 'student'
+        role: 'student',
+        isDemo: true
       });
       console.log('Created student:', studentEmail);
     } else {
       console.log('Student already exists:', studentEmail);
+    }
+
+    // Create sample faculty
+    const facultyEmail = 'faculty@test.com';
+    let faculty = await User.findOne({ email: facultyEmail });
+    if (!faculty) {
+      const hash = await bcrypt.hash('secret123', 10);
+      faculty = await User.create({
+        name: 'Demo Faculty',
+        email: facultyEmail,
+        passwordHash: hash,
+        role: 'faculty',
+        isDemo: true
+      });
+      console.log('Created faculty:', facultyEmail);
+    } else {
+      console.log('Faculty already exists:', facultyEmail);
     }
 
     // Create a sample course
@@ -79,11 +98,13 @@ async function main() {
     if (!assignment) {
       assignment = await Assignment.create({
         course: course._id,
+        courseName: course.title,
         title: 'Assignment 1',
         description: 'Seeded assignment. Submit a text file.',
         createdBy: admin._id,
         dueAt: new Date(Date.now() + 7 * 24 * 3600 * 1000), // one week from now
-        totalMarks: 100
+        maxMarks: 100,
+        status: 'published'
       });
       console.log('Created assignment: Assignment 1');
     } else {
