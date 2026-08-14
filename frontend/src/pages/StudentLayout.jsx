@@ -15,7 +15,7 @@ const StudentLayout = () => {
 
   return (
     <div className="layout-wrapper">
-      <aside className="sidebar">
+      <aside className="student-sidebar">
         <div className="logo-container">
           <div className="logo-icon">🎓</div>
           <h2 className="logo-text">EduPortal</h2>

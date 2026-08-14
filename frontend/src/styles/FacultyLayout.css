@@ -19,11 +19,11 @@
 /* Sidebar Styling */
 .faculty-sidebar {
   width: 280px;
-  background: white;
+  background: #1e293b;
   display: flex;
   flex-direction: column;
   padding: 1.5rem;
-  border-right: 1px solid #e2e8f0;
+  border-right: 1px solid #334155;
 }
 
 /* Brand Section */
@@ -48,14 +48,14 @@
 
 .brand-text h2 {
   font-size: 1.3rem;
-  color: #0f172a;
+  color: #ffffff;
   margin: 0;
   letter-spacing: -0.5px;
 }
 
 .brand-text span {
   font-size: 0.75rem;
-  color: #64748b;
+  color: #94a3b8;
   text-transform: uppercase;
   font-weight: 700;
 }
@@ -73,7 +73,7 @@
   align-items: center;
   gap: 14px;
   text-decoration: none;
-  color: #475569;
+  color: #94a3b8;
   padding: 0.8rem 1rem;
   border-radius: 14px;
   font-weight: 500;
@@ -87,8 +87,8 @@
 
 /* Hover & Active States matching your student portal */
 .faculty-link:hover {
-  background: #f8fafc;
-  color: #0ea5e9;
+  background: #334155;
+  color: #ffffff;
 }
 
 .faculty-link.active {
@@ -101,11 +101,11 @@
 .sidebar-footer {
   margin-top: auto;
   padding-top: 1rem;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid #334155;
 }
 
 .faculty-logout {
-  color: #64748b;
+  color: #94a3b8;
 }
 
 .faculty-logout:hover {
