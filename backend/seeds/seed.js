@@ -23,53 +23,62 @@ async function main() {
 
     // Create admin
     const adminEmail = 'admin@test.com';
+    const adminHash = await bcrypt.hash('adminpass', 10);
     let admin = await User.findOne({ email: adminEmail });
     if (!admin) {
-      const hash = await bcrypt.hash('adminpass', 10);
       admin = await User.create({
         name: 'Site Admin',
         email: adminEmail,
-        passwordHash: hash,
+        passwordHash: adminHash,
         role: 'admin',
         isDemo: true
       });
       console.log('Created admin:', adminEmail);
     } else {
-      console.log('Admin already exists:', adminEmail);
+      admin.passwordHash = adminHash;
+      admin.isDemo = true;
+      await admin.save();
+      console.log('Admin updated with correct password hash:', adminEmail);
     }
 
     // Create sample student
     const studentEmail = 'student@test.com';
+    const studentHash = await bcrypt.hash('secret123', 10);
     let student = await User.findOne({ email: studentEmail });
     if (!student) {
-      const hash = await bcrypt.hash('secret123', 10);
       student = await User.create({
         name: 'Test Student',
         email: studentEmail,
-        passwordHash: hash,
+        passwordHash: studentHash,
         role: 'student',
         isDemo: true
       });
       console.log('Created student:', studentEmail);
     } else {
-      console.log('Student already exists:', studentEmail);
+      student.passwordHash = studentHash;
+      student.isDemo = true;
+      await student.save();
+      console.log('Student updated with correct password hash:', studentEmail);
     }
 
     // Create sample faculty
     const facultyEmail = 'faculty@test.com';
+    const facultyHash = await bcrypt.hash('secret123', 10);
     let faculty = await User.findOne({ email: facultyEmail });
     if (!faculty) {
-      const hash = await bcrypt.hash('secret123', 10);
       faculty = await User.create({
         name: 'Demo Faculty',
         email: facultyEmail,
-        passwordHash: hash,
+        passwordHash: facultyHash,
         role: 'faculty',
         isDemo: true
       });
       console.log('Created faculty:', facultyEmail);
     } else {
-      console.log('Faculty already exists:', facultyEmail);
+      faculty.passwordHash = facultyHash;
+      faculty.isDemo = true;
+      await faculty.save();
+      console.log('Faculty updated with correct password hash:', facultyEmail);
     }
 
     // Create a sample course
