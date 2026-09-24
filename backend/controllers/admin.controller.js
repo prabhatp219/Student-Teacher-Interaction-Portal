@@ -35,7 +35,7 @@ exports.importUsers = async (req, res) => {
       const pwd = u.password || Math.random().toString(36).slice(-8);
       const bcrypt = require('bcrypt');
       const passwordHash = await bcrypt.hash(pwd, 10);
-      const newUser = await User.create({ name: u.name, email: u.email, passwordHash, role: u.role || 'student', department: u.department, meta: u.meta });
+      const newUser = await User.create({ name: u.name, email: u.email, passwordHash, role: u.role || 'student', department: u.department, meta: u.meta, isFirstLogin: true });
       created.push(newUser);
     }
 
@@ -76,7 +76,8 @@ exports.createUser = async (req, res) => {
       name,
       email,
       passwordHash,
-      role
+      role,
+      isFirstLogin: true
     });
 
     res.status(201).json({

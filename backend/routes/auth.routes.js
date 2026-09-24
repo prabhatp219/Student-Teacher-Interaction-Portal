@@ -6,6 +6,7 @@ const auth = require('../middleware/auth');
 // public
 router.post('/register', authCtrl.register);
 router.post('/login', authCtrl.login);
+router.post('/google', authCtrl.googleLogin);
 
 // optional refresh/logout
 router.post('/refresh', authCtrl.refresh);
@@ -13,5 +14,6 @@ router.post('/logout', auth, authCtrl.logout);
 
 // protected
 router.get('/me', auth, authCtrl.getMe);
+router.post('/set-password', auth, authCtrl.setPassword);
 
 module.exports = router;

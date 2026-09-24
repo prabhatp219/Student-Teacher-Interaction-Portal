@@ -21,6 +21,8 @@ const UserSchema = new Schema(
 
     isActive: { type: Boolean, default: true },
     isDemo:   { type: Boolean, default: false },
+    isFirstLogin: { type: Boolean, default: false },
+    googleId: { type: String, sparse: true },
     lastSeenAt: Date,
   },
   { timestamps: true }

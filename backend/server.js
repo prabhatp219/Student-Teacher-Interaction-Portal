@@ -35,6 +35,8 @@ const blockDemo = require("./middleware/blockDemo");
 // Protect all write operations globally — demo accounts (isDemo:true) are read-only
 app.use("/api/v1", blockDemo);
 app.use("/api/v1", apiRoutes);
+app.use("/api", blockDemo);
+app.use("/api", apiRoutes);
 
 app.get("/", (req, res) => res.send("API is running 🔥"));
 
