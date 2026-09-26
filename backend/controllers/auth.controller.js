@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require('google-auth-library');
 const User = require('../models/User');
+const logActivity = require('../utils/logActivity');
 
 const JWT_EXP = '7d'; // adjust as needed
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -50,6 +51,13 @@ exports.login = async (req, res) => {
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: JWT_EXP });
     const userSafe = user.toObject();
     delete userSafe.passwordHash;
+
+    await logActivity({
+      actor: user._id,
+      action: 'USER_LOGIN',
+      meta: { email: user.email, role: user.role, name: user.name },
+      req
+    });
 
     res.json({ token, user: userSafe, isFirstLogin: !!user.isFirstLogin });
   } catch (err) {
@@ -123,6 +131,13 @@ exports.googleLogin = async (req, res) => {
     const userSafe = user.toObject();
     delete userSafe.passwordHash;
 
+    await logActivity({
+      actor: user._id,
+      action: 'USER_GOOGLE_LOGIN',
+      meta: { email: user.email, role: user.role, name: user.name },
+      req
+    });
+
     res.json({
       token,
       user: userSafe,
@@ -153,6 +168,13 @@ exports.setPassword = async (req, res) => {
     user.passwordHash = passwordHash;
     user.isFirstLogin = false;
     await user.save();
+
+    await logActivity({
+      actor: user._id,
+      action: 'PASSWORD_RESET',
+      meta: { email: user.email },
+      req
+    });
 
     const userSafe = user.toObject();
     delete userSafe.passwordHash;

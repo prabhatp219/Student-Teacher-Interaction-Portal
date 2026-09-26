@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+require("./User");
 
 const LogSchema = new Schema(
   {

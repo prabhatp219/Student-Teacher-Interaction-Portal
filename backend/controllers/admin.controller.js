@@ -1,18 +1,35 @@
 const Log = require('../models/Log');
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
+const logActivity = require('../utils/logActivity');
 
 exports.getLogs = async (req, res) => {
   try {
-    const { page = 1, limit = 50, actor, action, from, to } = req.query;
+    const { page = 1, limit = 50, actor, action, from, to, search } = req.query;
     const q = {};
     if (actor) q.actor = actor;
     if (action) q.action = action;
-    if (from || to) q.createdAt = {};
-    if (from) q.createdAt.$gte = new Date(from);
-    if (to) q.createdAt.$lte = new Date(to);
+    if (search) {
+      q.$or = [
+        { action: { $regex: search, $options: 'i' } },
+        { ip: { $regex: search, $options: 'i' } }
+      ];
+    }
+    if (from || to) {
+      q.createdAt = {};
+      if (from) q.createdAt.$gte = new Date(from);
+      if (to) {
+        const toDate = new Date(to);
+        toDate.setHours(23, 59, 59, 999);
+        q.createdAt.$lte = toDate;
+      }
+    }
     const skip = (Number(page) - 1) * Number(limit);
-    const items = await Log.find(q).sort({ createdAt: -1 }).skip(skip).limit(Number(limit)).populate('actor','name email');
+    const items = await Log.find(q)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(Number(limit))
+      .populate('actor', 'name email role');
     const total = await Log.countDocuments(q);
     res.json({ data: items, total });
   } catch (err) {
@@ -37,6 +54,15 @@ exports.importUsers = async (req, res) => {
       const passwordHash = await bcrypt.hash(pwd, 10);
       const newUser = await User.create({ name: u.name, email: u.email, passwordHash, role: u.role || 'student', department: u.department, meta: u.meta, isFirstLogin: true });
       created.push(newUser);
+    }
+
+    if (created.length > 0) {
+      await logActivity({
+        actor: req.user?.id,
+        action: 'USERS_BULK_IMPORT',
+        meta: { count: created.length },
+        req
+      });
     }
 
     res.json({ created: created.length });
@@ -80,6 +106,13 @@ exports.createUser = async (req, res) => {
       isFirstLogin: true
     });
 
+    await logActivity({
+      actor: req.user?.id,
+      action: 'USER_CREATED',
+      meta: { createdEmail: user.email, name: user.name, role: user.role },
+      req
+    });
+
     res.status(201).json({
       id: user._id,
       email: user.email,
@@ -107,6 +140,14 @@ exports.deleteUser = async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
     if (!user) return res.status(404).json({ msg: 'User not found' });
+
+    await logActivity({
+      actor: req.user?.id,
+      action: 'USER_DELETED',
+      meta: { deletedUserId: user._id, email: user.email, name: user.name, role: user.role },
+      req
+    });
+
     res.json({ msg: 'User deleted' });
   } catch (err) {
     console.error('admin.deleteUser', err);
@@ -122,6 +163,13 @@ exports.toggleUserActive = async (req, res) => {
 
     user.isActive = user.isActive === false ? true : false;
     await user.save();
+
+    await logActivity({
+      actor: req.user?.id,
+      action: user.isActive ? 'USER_ENABLED' : 'USER_DISABLED',
+      meta: { targetUserId: user._id, email: user.email, name: user.name },
+      req
+    });
 
     res.json({ msg: user.isActive ? 'User enabled' : 'User disabled', isActive: user.isActive });
   } catch (err) {

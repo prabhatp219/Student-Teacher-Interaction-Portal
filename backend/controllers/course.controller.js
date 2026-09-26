@@ -1,5 +1,6 @@
 const Course = require('../models/Course');
 const User = require('../models/User');
+const logActivity = require('../utils/logActivity');
 
 exports.listCourses = async (req, res) => {
   try {
@@ -65,6 +66,14 @@ exports.createCourse = async (req, res) => {
   try {
     const payload = req.body;
     const course = await Course.create(payload);
+
+    await logActivity({
+      actor: req.user?.id,
+      action: 'COURSE_CREATED',
+      meta: { courseCode: course.code, title: course.title, courseId: course._id },
+      req
+    });
+
     res.status(201).json(course);
   } catch (err) {
     console.error('course.createCourse', err);
@@ -76,6 +85,14 @@ exports.updateCourse = async (req, res) => {
   try {
     const course = await Course.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!course) return res.status(404).json({ msg: 'Not found' });
+
+    await logActivity({
+      actor: req.user?.id,
+      action: 'COURSE_UPDATED',
+      meta: { courseCode: course.code, title: course.title, courseId: course._id },
+      req
+    });
+
     res.json(course);
   } catch (err) {
     console.error('course.updateCourse', err);
@@ -85,7 +102,15 @@ exports.updateCourse = async (req, res) => {
 
 exports.deleteCourse = async (req, res) => {
   try {
-    await Course.findByIdAndDelete(req.params.id);
+    const course = await Course.findByIdAndDelete(req.params.id);
+
+    await logActivity({
+      actor: req.user?.id,
+      action: 'COURSE_DELETED',
+      meta: { courseId: req.params.id, courseCode: course?.code, title: course?.title },
+      req
+    });
+
     res.json({ msg: 'Deleted' });
   } catch (err) {
     console.error('course.deleteCourse', err);
