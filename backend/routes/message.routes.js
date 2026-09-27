@@ -11,4 +11,7 @@ router.post('/chat/:chatId', auth, messageCtrl.postMessage);
 // mark read
 router.put('/:id/read', auth, messageCtrl.markRead);
 
+// delete single message ('me' or 'everyone')
+router.delete('/:id', auth, messageCtrl.deleteMessage);
+
 module.exports = router;

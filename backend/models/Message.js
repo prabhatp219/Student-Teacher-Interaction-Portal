@@ -18,6 +18,10 @@ const MessageSchema = new Schema(
     ],
 
     readBy: [{ type: Schema.Types.ObjectId, ref: "User" }],
+
+    deletedFor: [{ type: Schema.Types.ObjectId, ref: "User" }],
+
+    isDeletedForEveryone: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

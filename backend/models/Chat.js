@@ -9,7 +9,10 @@ const ChatSchema = new Schema(
     type: { type: String, enum: ["one-to-one", "group"], default: "one-to-one" },
 
     title: String,
+
     lastMessageAt: Date,
+
+    deletedFor: [{ type: Schema.Types.ObjectId, ref: "User" }],
   },
   { timestamps: true }
 );

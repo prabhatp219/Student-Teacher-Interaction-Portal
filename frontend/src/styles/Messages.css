@@ -543,3 +543,185 @@
   font-weight: 700;
   flex-shrink: 0;
 }
+
+/* ── Conversation List Delete Button ─────────────────────── */
+.conversation-item-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+.conversation-item-wrapper .conversation-item {
+  flex: 1;
+}
+
+.chat-delete-btn {
+  opacity: 0;
+  background: none;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  position: absolute;
+  right: 8px;
+  z-index: 5;
+}
+
+.conversation-item-wrapper:hover .chat-delete-btn {
+  opacity: 1;
+}
+
+.chat-delete-btn:hover {
+  background: #fee2e2;
+  transform: scale(1.1);
+}
+
+/* ── Chat Header Delete Button ───────────────────────────── */
+.header-delete-chat-btn {
+  background: #fef2f2;
+  color: #ef4444;
+  border: 1px solid #fca5a5;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: auto;
+  transition: all 0.2s ease;
+}
+
+.header-delete-chat-btn:hover {
+  background: #fee2e2;
+  border-color: #f87171;
+}
+
+/* ── Message Bubble Delete Button ────────────────────────── */
+.message-bubble {
+  position: relative;
+}
+
+.msg-delete-icon {
+  opacity: 0;
+  position: absolute;
+  top: 4px;
+  right: -24px;
+  background: none;
+  border: none;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  padding: 2px;
+}
+
+.message-bubble-row.mine .msg-delete-icon {
+  right: auto;
+  left: -24px;
+}
+
+.message-bubble-row:hover .msg-delete-icon {
+  opacity: 1;
+}
+
+.msg-delete-icon:hover {
+  transform: scale(1.2);
+}
+
+.message-bubble.deleted {
+  background: #f1f5f9 !important;
+  color: #94a3b8 !important;
+  border: 1px dashed #cbd5e1 !important;
+}
+
+.message-bubble.deleted p {
+  color: #94a3b8;
+}
+
+/* ── Deletion Choice Modal ───────────────────────────────── */
+.delete-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(2px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.delete-modal-content {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.delete-modal-content h3 {
+  margin: 0 0 8px;
+  font-size: 1.2rem;
+  color: #1e293b;
+}
+
+.delete-modal-content p {
+  margin: 0 0 20px;
+  font-size: 0.9rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.delete-modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-btn {
+  width: 100%;
+  padding: 11px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s ease;
+}
+
+.btn-delete-me {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.btn-delete-me:hover {
+  background: #e2e8f0;
+}
+
+.btn-delete-everyone {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.btn-delete-everyone:hover {
+  background: #dc2626;
+}
+
+.btn-cancel {
+  background: transparent;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+.btn-cancel:hover {
+  background: #f8fafc;
+}
+

@@ -18,6 +18,9 @@ export default function MessagesPage() {
   const [typingInfo, setTypingInfo] = useState('');        // e.g. "Neha is typing..."
   const [unreadCounts, setUnreadCounts] = useState({});   // { chatId: count }
 
+  // Modal State for Deletion
+  const [deleteModalTarget, setDeleteModalTarget] = useState(null); // { type: 'chat'|'message', item: obj }
+
   const messagesEndRef = useRef(null);
   const activeRef = useRef(null);       // keeps active chat accessible inside socket listeners
   const meRef = useRef(null);           // keeps me accessible inside socket listeners
@@ -78,21 +81,17 @@ export default function MessagesPage() {
       // If this message belongs to the currently open chat → append to messages
       if (currentActive && String(msgChatId) === String(currentActive._id)) {
         setMessages((prev) => {
-          // Avoid duplicate (sender already appended optimistically)
           if (prev.some((m) => String(m._id) === String(newMsg._id))) return prev;
           return [...prev, newMsg];
         });
-        // Scroll to bottom
         setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 50);
       } else {
-        // Message arrived for a different chat → increment unread badge
         setUnreadCounts((prev) => ({
           ...prev,
           [String(msgChatId)]: (prev[String(msgChatId)] || 0) + 1,
         }));
       }
 
-      // Bump lastMessageAt of the relevant chat and move it to the top
       setChats((prev) => {
         const updated = prev.map((c) =>
           String(c._id) === String(msgChatId)
@@ -100,9 +99,34 @@ export default function MessagesPage() {
             : c,
         );
         const target = updated.find((c) => String(c._id) === String(msgChatId));
-        if (!target) return prev; // chat not loaded yet
+        if (!target) return prev;
         return [target, ...updated.filter((c) => String(c._id) !== String(msgChatId))];
       });
+    };
+
+    const onMessageDeleted = ({ messageId, chatId, message, mode }) => {
+      if (activeRef.current && String(chatId) === String(activeRef.current._id)) {
+        setMessages((prev) => {
+          if (mode === 'everyone') {
+            return prev.map((m) =>
+              String(m._id) === String(messageId)
+                ? { ...m, isDeletedForEveryone: true, text: 'This message was deleted', attachments: [] }
+                : m
+            );
+          } else {
+            return prev.filter((m) => String(m._id) !== String(messageId));
+          }
+        });
+      }
+    };
+
+    const onChatDeleted = ({ chatId }) => {
+      setChats((prev) => prev.filter((c) => String(c._id) !== String(chatId)));
+      if (activeRef.current && String(activeRef.current._id) === String(chatId)) {
+        setActive(null);
+        setMessages([]);
+        setMobileView('list');
+      }
     };
 
     const onUserTyping = ({ chatId, userName }) => {
@@ -118,11 +142,15 @@ export default function MessagesPage() {
     };
 
     socket.on('new_message', onNewMessage);
+    socket.on('message_deleted', onMessageDeleted);
+    socket.on('chat_deleted', onChatDeleted);
     socket.on('user_typing', onUserTyping);
     socket.on('user_stop_typing', onStopTyping);
 
     return () => {
       socket.off('new_message', onNewMessage);
+      socket.off('message_deleted', onMessageDeleted);
+      socket.off('chat_deleted', onChatDeleted);
       socket.off('user_typing', onUserTyping);
       socket.off('user_stop_typing', onStopTyping);
     };
@@ -140,7 +168,7 @@ export default function MessagesPage() {
     return () => {
       socket.emit('leave_chat', active._id);
     };
-  }, [active?._id]);   // eslint-disable-line react-hooks/exhaustive-deps
+  }, [active?._id]);
 
   // ─── Auto-scroll to bottom of messages ───────────────────────────────────
   useEffect(() => {
@@ -182,7 +210,7 @@ export default function MessagesPage() {
     } catch (err) {
       setError(err.response?.data?.msg || 'Could not start conversation with this contact.');
     }
-  }, [chats, openChat]);   // eslint-disable-line react-hooks/exhaustive-deps
+  }, [chats, openChat]);
 
   // ─── Handle typing emission ───────────────────────────────────────────────
   const handleTyping = (e) => {
@@ -192,7 +220,6 @@ export default function MessagesPage() {
 
     socket.emit('typing', { chatId: active._id, userName: meRef.current?.name || 'Someone' });
 
-    // Stop typing after 1.5 s of inactivity
     clearTimeout(typingTimerRef.current);
     typingTimerRef.current = setTimeout(() => {
       socket.emit('stop_typing', { chatId: active._id });
@@ -205,7 +232,6 @@ export default function MessagesPage() {
     const trimmed = text.trim();
     if (!trimmed || !active || sending) return;
 
-    // Stop any pending typing timer
     clearTimeout(typingTimerRef.current);
     getSocket()?.emit('stop_typing', { chatId: active._id });
 
@@ -215,23 +241,56 @@ export default function MessagesPage() {
 
     try {
       const res = await api.post(`/messages/chat/${active._id}`, { text: trimmed });
-      // Optimistically add sender's own message (socket will dedup for others)
       const newMsg = { ...res.data, from: meRef.current };
       setMessages((prev) => {
-        if (prev.some((m) => m._id === newMsg._id)) return prev;
+        if (prev.some((m) => String(m._id) === String(newMsg._id))) return prev;
         return [...prev, newMsg];
       });
     } catch (err) {
       setError(err.response?.data?.msg || 'Message could not be sent. Please try again.');
-      setText(trimmed); // restore so user can retry
+      setText(trimmed);
     } finally {
       setSending(false);
     }
   };
 
+  // ─── Handle Deletion Action ───────────────────────────────────────────────
+  const confirmDelete = async (mode) => {
+    if (!deleteModalTarget) return;
+    const { type, item } = deleteModalTarget;
+    setDeleteModalTarget(null);
+    setError('');
+
+    try {
+      if (type === 'chat') {
+        await api.delete(`/chats/${item._id}?mode=${mode}`);
+        setChats((prev) => prev.filter((c) => String(c._id) !== String(item._id)));
+        if (active?._id === item._id) {
+          setActive(null);
+          setMessages([]);
+          setMobileView('list');
+        }
+      } else if (type === 'message') {
+        await api.delete(`/messages/${item._id}?mode=${mode}`);
+        setMessages((prev) => {
+          if (mode === 'everyone') {
+            return prev.map((m) =>
+              String(m._id) === String(item._id)
+                ? { ...m, isDeletedForEveryone: true, text: 'This message was deleted', attachments: [] }
+                : m
+            );
+          } else {
+            return prev.filter((m) => String(m._id) !== String(item._id));
+          }
+        });
+      }
+    } catch (err) {
+      setError(err.response?.data?.msg || 'Could not delete item.');
+    }
+  };
+
   const activeOther = active ? getOther(active) : null;
 
-  // ─── Render ───────────────────────────────────────────────────────────────
   if (loading) {
     return (
       <div className="messages-loading">
@@ -302,23 +361,34 @@ export default function MessagesPage() {
                   const isActive = active?._id === chat._id;
                   const unread = unreadCounts[String(chat._id)] || 0;
                   return (
-                    <button
-                      key={chat._id}
-                      className={`conversation-item ${isActive ? 'active' : ''}`}
-                      onClick={() => openChat(chat)}
-                      aria-label={`Open conversation with ${other?.name || 'User'}`}
-                    >
-                      <div className="avatar-circle conversation-avatar">
-                        {other?.name?.charAt(0).toUpperCase() || '💬'}
-                      </div>
-                      <div className="contact-info">
-                        <div className="contact-name-row">
-                          <span className="contact-name">{other?.name || 'Conversation'}</span>
-                          {unread > 0 && <span className="unread-badge">{unread}</span>}
+                    <div key={chat._id} className={`conversation-item-wrapper ${isActive ? 'active' : ''}`}>
+                      <button
+                        className="conversation-item"
+                        onClick={() => openChat(chat)}
+                        aria-label={`Open conversation with ${other?.name || 'User'}`}
+                      >
+                        <div className="avatar-circle conversation-avatar">
+                          {other?.name?.charAt(0).toUpperCase() || '💬'}
                         </div>
-                        <span className="contact-email">{other?.email || ''}</span>
-                      </div>
-                    </button>
+                        <div className="contact-info">
+                          <div className="contact-name-row">
+                            <span className="contact-name">{other?.name || 'Conversation'}</span>
+                            {unread > 0 && <span className="unread-badge">{unread}</span>}
+                          </div>
+                          <span className="contact-email">{other?.email || ''}</span>
+                        </div>
+                      </button>
+                      <button
+                        className="chat-delete-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeleteModalTarget({ type: 'chat', item: chat });
+                        }}
+                        title="Delete Chat"
+                      >
+                        🗑️
+                      </button>
+                    </div>
                   );
                 })}
           </div>
@@ -340,6 +410,13 @@ export default function MessagesPage() {
                   {activeOther?.role?.toUpperCase()}
                 </span>
               </div>
+              <button
+                className="header-delete-chat-btn"
+                onClick={() => setDeleteModalTarget({ type: 'chat', item: active })}
+                title="Delete Conversation"
+              >
+                🗑️ Delete Chat
+              </button>
             </header>
 
             {/* Messages */}
@@ -358,14 +435,27 @@ export default function MessagesPage() {
               ) : (
                 messages.map((msg) => {
                   const isMine = String(msg.from?._id || msg.from) === String(me?._id);
+                  const isDeleted = msg.isDeletedForEveryone;
+
                   return (
                     <div key={msg._id} className={`message-bubble-row ${isMine ? 'mine' : 'theirs'}`}>
-                      <div className="message-bubble">
-                        <p className="message-text">{msg.text}</p>
+                      <div className={`message-bubble ${isDeleted ? 'deleted' : ''}`}>
+                        <p className="message-text">
+                          {isDeleted ? <i>🚫 This message was deleted</i> : msg.text}
+                        </p>
                         {msg.createdAt && (
                           <span className="message-timestamp">
                             {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </span>
+                        )}
+                        {!isDeleted && (
+                          <button
+                            className="msg-delete-icon"
+                            onClick={() => setDeleteModalTarget({ type: 'message', item: msg })}
+                            title="Delete Message"
+                          >
+                            🗑️
+                          </button>
                         )}
                       </div>
                     </div>
@@ -409,6 +499,38 @@ export default function MessagesPage() {
           </div>
         )}
       </section>
+
+      {/* ── Deletion Choice Modal (WhatsApp Style) ── */}
+      {deleteModalTarget && (
+        <div className="delete-modal-overlay" onClick={() => setDeleteModalTarget(null)}>
+          <div className="delete-modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Delete {deleteModalTarget.type === 'chat' ? 'Chat' : 'Message'}?</h3>
+            <p>
+              {deleteModalTarget.type === 'chat'
+                ? 'Do you want to delete this conversation for yourself only or for everyone?'
+                : 'Do you want to delete this message for yourself only or for everyone?'}
+            </p>
+
+            <div className="delete-modal-actions">
+              <button className="modal-btn btn-delete-me" onClick={() => confirmDelete('me')}>
+                Delete for Me
+              </button>
+
+              {(deleteModalTarget.type === 'chat' ||
+                String(deleteModalTarget.item.from?._id || deleteModalTarget.item.from) === String(me?._id) ||
+                me?.role === 'admin') && (
+                <button className="modal-btn btn-delete-everyone" onClick={() => confirmDelete('everyone')}>
+                  Delete for Everyone
+                </button>
+              )}
+
+              <button className="modal-btn btn-cancel" onClick={() => setDeleteModalTarget(null)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

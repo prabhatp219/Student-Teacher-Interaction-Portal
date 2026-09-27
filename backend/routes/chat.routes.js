@@ -12,5 +12,7 @@ router.get('/contacts', auth, chatCtrl.listEligibleContacts);
 // get chat by id
 router.get('/:id', auth, chatCtrl.getChatById);
 
-module.exports = router;
+// delete chat ('me' or 'everyone')
+router.delete('/:id', auth, chatCtrl.deleteChat);
 
+module.exports = router;
