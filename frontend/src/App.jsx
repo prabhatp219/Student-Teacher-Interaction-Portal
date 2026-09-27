@@ -6,6 +6,7 @@ import StudentLayout from "./pages/StudentLayout";
 import StudentDashboard from "./pages/StudentDashboard";
 import StudentCourses from "./pages/StudentCourses";
 import StudentAssignments from "./pages/StudentAssignments";
+import MessagesPage from "./pages/MessagesPage";
 
 // faculty
 import FacultyDashboard from "./pages/faculty/FacultyDashboard";
@@ -42,6 +43,7 @@ export default function App() {
         <Route index element={<StudentDashboard />} />
         <Route path="courses" element={<StudentCourses />} />
         <Route path="assignments" element={<StudentAssignments />} />
+        <Route path="messages" element={<MessagesPage />} />
       </Route>
 
       {/* Faculty */}
@@ -69,6 +71,7 @@ export default function App() {
 
         {/* ✅ FIXED: removed /faculty prefix */}
         <Route path="courses/:id" element={<CourseDetails />} />
+        <Route path="messages" element={<MessagesPage />} />
       </Route>
 
       {/* Admin */}

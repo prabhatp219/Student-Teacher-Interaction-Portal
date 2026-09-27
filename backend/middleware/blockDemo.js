@@ -7,8 +7,15 @@ const User = require('../models/User');
 
 const WRITE_METHODS = ['POST', 'PUT', 'PATCH', 'DELETE'];
 
-// Routes that demo users ARE allowed to POST to (login itself must work)
-const DEMO_WHITELIST = ['/api/v1/auth/login', '/api/v1/auth/refresh'];
+// Routes that demo users ARE allowed to POST to (login and messaging)
+const DEMO_WHITELIST = [
+  '/api/v1/auth/login',
+  '/api/v1/auth/refresh',
+  '/api/v1/chats',
+  '/api/v1/messages',
+  '/chats',
+  '/messages',
+];
 
 module.exports = async (req, res, next) => {
   // Only block write methods

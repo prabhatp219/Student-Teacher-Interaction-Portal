@@ -7,6 +7,7 @@ router.post('/', auth, chatCtrl.createOrGetChat);
 
 // list user chats
 router.get('/', auth, chatCtrl.listUserChats);
+router.get('/contacts', auth, chatCtrl.listEligibleContacts);
 
 // get chat by id
 router.get('/:id', auth, chatCtrl.getChatById);
