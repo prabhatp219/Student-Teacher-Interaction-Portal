@@ -1,4 +1,5 @@
 const Course = require("../models/Course");
+const User = require("../models/User");
 
 exports.getFacultyDashboard = async (req, res) => {
   try {
@@ -9,10 +10,15 @@ exports.getFacultyDashboard = async (req, res) => {
       isActive: true,
     });
 
-    const totalStudents = courses.reduce(
-      (sum, course) => sum + course.students.length,
-      0
-    );
+    // Collect unique student IDs across all active courses taught by this faculty member
+    const studentIds = [
+      ...new Set(courses.flatMap((course) => (course.students || []).map(String))),
+    ];
+
+    // Count only existing, active student accounts
+    const totalStudents = studentIds.length
+      ? await User.countDocuments({ _id: { $in: studentIds }, role: "student" })
+      : 0;
 
     res.json({
       activeCourses: courses.length,

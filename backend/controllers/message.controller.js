@@ -1,5 +1,6 @@
 const Message = require('../models/Message');
 const Chat = require('../models/Chat');
+const { getIO } = require('../socket');
 
 exports.listForChat = async (req, res) => {
   try {
@@ -26,11 +27,18 @@ exports.postMessage = async (req, res) => {
     if (!chat) return res.status(404).json({ msg: 'Chat not found' });
     if (!chat.participants.map(p => p.toString()).includes(req.user.id) && req.user.role !== 'admin') return res.status(403).json({ msg: 'Forbidden' });
 
-    const message = await Message.create({ chat: chatId, from: req.user.id, text, attachments: req.files?.map(f => ({ filename: f.originalname, url: `/uploads/${f.filename}`, mimeType: f.mimetype, size: f.size })) || [] });
+    let message = await Message.create({ chat: chatId, from: req.user.id, text, attachments: req.files?.map(f => ({ filename: f.originalname, url: `/uploads/${f.filename}`, mimeType: f.mimetype, size: f.size })) || [] });
     chat.lastMessageAt = new Date();
     await chat.save();
 
-    // NOTE: emit via socket.io in your real app here.
+    // Populate sender details before emitting
+    message = await message.populate('from', 'name email');
+
+    // Emit to everyone in the chat room in real time
+    const io = getIO();
+    if (io) {
+      io.to(String(chatId)).emit('new_message', message);
+    }
 
     res.status(201).json(message);
   } catch (err) {
