@@ -6,10 +6,11 @@ let io = null;
 const initSocket = (httpServer) => {
   io = new Server(httpServer, {
     cors: {
-      origin: ['http://localhost:5173', 'https://eduhub-alpha-taupe.vercel.app'],
+      origin: true, // Dynamically reflect origin to support localhost & Vercel
       methods: ['GET', 'POST'],
       credentials: true,
     },
+    transports: ['polling', 'websocket'],
   });
 
   io.on('connection', (socket) => {
@@ -60,4 +61,7 @@ const getIO = () => {
   return io;
 };
 
-module.exports = { initSocket, getIO };
+module.exports = {
+  initSocket,
+  getIO,
+};

@@ -34,10 +34,15 @@ exports.postMessage = async (req, res) => {
     // Populate sender details before emitting
     message = await message.populate('from', 'name email');
 
-    // Emit to everyone in the chat room in real time
+    // Emit to chat room & participant personal rooms in real time
     const io = getIO();
     if (io) {
       io.to(String(chatId)).emit('new_message', message);
+      if (chat.participants) {
+        chat.participants.forEach((pId) => {
+          io.to(String(pId)).emit('new_message', message);
+        });
+      }
     }
 
     res.status(201).json(message);

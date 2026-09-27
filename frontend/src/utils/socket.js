@@ -1,7 +1,14 @@
 // frontend/src/utils/socket.js
 import { io } from 'socket.io-client';
 
-const SOCKET_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+/**
+ * Returns the base server URL stripping any trailing /api or /api/v1 paths
+ * so Socket.IO connects to the root endpoint (e.g. https://domain.com/socket.io/).
+ */
+const getSocketUrl = () => {
+  const envUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  return envUrl.replace(/\/api(\/v1)?\/?$/, '');
+};
 
 let socket = null;
 
@@ -10,17 +17,28 @@ let socket = null;
  * Safe to call multiple times — reuses existing connection.
  */
 export const connectSocket = (userId) => {
-  if (socket && socket.connected) return socket;
+  const url = getSocketUrl();
 
-  socket = io(SOCKET_URL, {
-    transports: ['websocket'],
-    withCredentials: true,
-  });
+  if (!socket) {
+    socket = io(url, {
+      transports: ['polling', 'websocket'],
+      withCredentials: true,
+      autoConnect: true,
+    });
+  }
 
-  socket.on('connect', () => {
-    // Tell the server which user this socket belongs to
-    socket.emit('setup', userId);
-  });
+  if (userId) {
+    const setupUser = () => {
+      socket.emit('setup', String(userId));
+    };
+
+    if (socket.connected) {
+      setupUser();
+    } else {
+      socket.off('connect', setupUser);
+      socket.on('connect', setupUser);
+    }
+  }
 
   return socket;
 };
