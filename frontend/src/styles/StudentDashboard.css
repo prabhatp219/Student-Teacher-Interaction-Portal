@@ -440,10 +440,54 @@
     flex: 1;
     min-height: 0;
   }
+
+  .content-inner {
+    padding: 20px 16px;
+  }
+
+  .content-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
 }
 
 @media (max-width: 640px) {
   .main-content-area {
     overflow-y: auto;
+  }
+
+  .content-inner {
+    padding: 16px 12px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 0;
+  }
+
+  .greeting-text {
+    font-size: 22px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 16px;
+  }
+
+  .content-card-main,
+  .content-card-side {
+    padding: 18px 14px;
+    border-radius: 16px;
   }
 }

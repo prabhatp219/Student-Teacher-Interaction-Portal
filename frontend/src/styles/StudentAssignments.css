@@ -173,3 +173,63 @@ body {
   border-radius: 8px;
   cursor: pointer;
 }
+
+/* ── Mobile & Responsive Tweaks ───────────────────────────────────────── */
+@media (max-width: 768px) {
+  .st-asgn-page-wrapper {
+    padding: 24px 16px;
+  }
+
+  .st-asgn-header-container {
+    margin-bottom: 24px;
+  }
+
+  .st-asgn-main-title {
+    font-size: 24px;
+    padding-left: 14px;
+    border-left-width: 3px;
+  }
+
+  .st-asgn-grid-layout {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .st-asgn-card-v2 {
+    padding: 20px;
+    border-radius: 16px;
+  }
+
+  .st-asgn-description-text {
+    min-height: auto;
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .st-asgn-page-wrapper {
+    padding: 16px 12px;
+  }
+
+  .st-asgn-grid-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .st-asgn-main-title {
+    font-size: 20px;
+  }
+
+  .st-asgn-card-v2 {
+    padding: 16px;
+  }
+
+  .st-asgn-action-group {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .st-asgn-save-btn,
+  .st-asgn-cancel-btn {
+    width: 100%;
+  }
+}

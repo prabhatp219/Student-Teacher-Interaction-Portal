@@ -180,3 +180,84 @@
   font-size: 0.85rem;
   min-width: 70px;
 }
+
+/* =============================================
+   FACULTY DASHBOARD — MOBILE RESPONSIVE
+   ============================================= */
+
+@media (max-width: 1024px) {
+  .faculty-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .faculty-db-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+
+  .faculty-db-greeting h1 {
+    font-size: 1.5rem;
+  }
+
+  .stats-container {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .faculty-stat-card {
+    padding: 1.2rem;
+    border-radius: 16px;
+  }
+
+  .performance-panel,
+  .action-panel,
+  .upcoming-panel {
+    padding: 1.25rem;
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+  }
+
+  .chart-area {
+    height: 200px;
+    padding: 14px 8px;
+  }
+
+  .bar-fill {
+    width: 26px;
+  }
+
+  .bar-label {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .faculty-stat-card {
+    gap: 12px;
+    padding: 1rem;
+  }
+
+  .stat-icon {
+    width: 46px;
+    height: 46px;
+    font-size: 1.5rem;
+    border-radius: 12px;
+  }
+
+  .stat-info h3 {
+    font-size: 1.3rem;
+  }
+
+  .panel-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 1.2rem;
+  }
+}
