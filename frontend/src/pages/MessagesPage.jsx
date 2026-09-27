@@ -53,9 +53,6 @@ export default function MessagesPage() {
         setMe(meRes.data);
         setChats(chatRes.data || []);
         setContacts(contactRes.data || []);
-
-        // Connect socket after we know who the user is
-        connectSocket(meRes.data._id);
       } catch {
         if (!cancelled) setError('Could not load messages. Please refresh and try again.');
       } finally {
@@ -69,17 +66,20 @@ export default function MessagesPage() {
 
   // ─── Socket.IO listeners ──────────────────────────────────────────────────
   useEffect(() => {
-    const socket = getSocket();
+    if (!me?._id) return;
+
+    const socket = connectSocket(me._id);
     if (!socket) return;
 
     const onNewMessage = (newMsg) => {
       const currentActive = activeRef.current;
+      const msgChatId = typeof newMsg.chat === 'object' ? newMsg.chat?._id : newMsg.chat;
 
       // If this message belongs to the currently open chat → append to messages
-      if (currentActive && String(newMsg.chat) === String(currentActive._id)) {
+      if (currentActive && String(msgChatId) === String(currentActive._id)) {
         setMessages((prev) => {
           // Avoid duplicate (sender already appended optimistically)
-          if (prev.some((m) => m._id === newMsg._id)) return prev;
+          if (prev.some((m) => String(m._id) === String(newMsg._id))) return prev;
           return [...prev, newMsg];
         });
         // Scroll to bottom
@@ -88,20 +88,20 @@ export default function MessagesPage() {
         // Message arrived for a different chat → increment unread badge
         setUnreadCounts((prev) => ({
           ...prev,
-          [String(newMsg.chat)]: (prev[String(newMsg.chat)] || 0) + 1,
+          [String(msgChatId)]: (prev[String(msgChatId)] || 0) + 1,
         }));
       }
 
       // Bump lastMessageAt of the relevant chat and move it to the top
       setChats((prev) => {
         const updated = prev.map((c) =>
-          String(c._id) === String(newMsg.chat)
+          String(c._id) === String(msgChatId)
             ? { ...c, lastMessageAt: newMsg.createdAt }
             : c,
         );
-        const target = updated.find((c) => String(c._id) === String(newMsg.chat));
+        const target = updated.find((c) => String(c._id) === String(msgChatId));
         if (!target) return prev; // chat not loaded yet
-        return [target, ...updated.filter((c) => String(c._id) !== String(newMsg.chat))];
+        return [target, ...updated.filter((c) => String(c._id) !== String(msgChatId))];
       });
     };
 
@@ -126,7 +126,7 @@ export default function MessagesPage() {
       socket.off('user_typing', onUserTyping);
       socket.off('user_stop_typing', onStopTyping);
     };
-  }, []);   // run once — listeners use refs
+  }, [me?._id]);
 
   // ─── Join / leave chat room when active chat changes ──────────────────────
   useEffect(() => {
