@@ -76,7 +76,7 @@ const NAV_ITEMS = [
   },
 ];
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ isOpen, onClose }) {
   const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -86,7 +86,15 @@ export default function AdminSidebar() {
   };
 
   return (
-    <aside className="admin-sidebar">
+    <aside className={`admin-sidebar ${isOpen ? "sidebar-open" : ""}`}>
+      {/* Mobile close button */}
+      <button className="sidebar-close-btn" onClick={onClose} aria-label="Close menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+
       {/* Brand */}
       <div className="sidebar-brand">
         <div className="sidebar-brand-icon">
@@ -116,6 +124,7 @@ export default function AdminSidebar() {
             className={({ isActive }) =>
               `sidebar-nav-item ${isActive ? "active" : ""}`
             }
+            onClick={onClose}
           >
             <span className="sidebar-nav-icon">{item.icon}</span>
             <span>{item.label}</span>

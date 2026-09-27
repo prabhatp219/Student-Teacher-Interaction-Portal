@@ -171,3 +171,30 @@
 .rem-f, .rem-s { border-left: 3px solid #ef4444; }
 
 .adm-crs-select:hover { border-color: #cbd5e1; }
+
+/* =============================================
+   ADMIN COURSES — MOBILE RESPONSIVE
+   ============================================= */
+@media (max-width: 900px) {
+  .adm-crs-container {
+    padding: 16px 12px;
+  }
+  .adm-crs-form-row {
+    flex-direction: column;
+  }
+  .adm-crs-input,
+  .adm-crs-textarea {
+    min-width: unset;
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .adm-crs-title {
+    font-size: 1.3rem;
+  }
+  /* Horizontal scroll for tables */
+  .adm-crs-table-wrapper {
+    overflow-x: auto;
+  }
+}

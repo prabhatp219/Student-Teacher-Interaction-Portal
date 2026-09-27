@@ -512,3 +512,31 @@
   background: linear-gradient(135deg, #4ade80, #22c55e);
   box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
 }
+
+/* =============================================
+   ADMIN USERS PAGE — MOBILE RESPONSIVE
+   ============================================= */
+@media (max-width: 900px) {
+  .adm-users-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .adm-users-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .adm-users-title { font-size: 17px; }
+
+  .adm-table-section {
+    padding: 12px 12px 16px;
+  }
+
+  /* Collapse email column on very small screens */
+  .adm-table th:nth-child(2),
+  .adm-table td:nth-child(2) {
+    display: none;
+  }
+}

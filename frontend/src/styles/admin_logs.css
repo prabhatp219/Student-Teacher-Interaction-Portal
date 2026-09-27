@@ -489,3 +489,54 @@
   color: #0f172a;
   padding: 0 6px;
 }
+
+/* =============================================
+   ADMIN LOGS — MOBILE RESPONSIVE
+   ============================================= */
+@media (max-width: 900px) {
+  .adm-logs-stats-bar {
+    grid-template-columns: 1fr 1fr;
+  }
+  .adm-logs-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .adm-logs-filters-left {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .adm-search-input-box {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .adm-logs-stats-bar {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .adm-stat-card {
+    padding: 12px 14px;
+  }
+  .adm-stat-number { font-size: 17px; }
+  .adm-logs-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .adm-logs-title { font-size: 18px; }
+
+  /* Horizontal scroll for the table */
+  .adm-table-responsive {
+    overflow-x: auto;
+  }
+  .adm-logs-table {
+    min-width: 600px;
+  }
+
+  .adm-logs-pagination {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

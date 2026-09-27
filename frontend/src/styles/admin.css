@@ -477,3 +477,131 @@
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* =============================================
+   MOBILE RESPONSIVE — Admin Layout
+   ============================================= */
+
+/* Hamburger — hidden on desktop */
+.admin-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #334155;
+  padding: 6px;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.admin-hamburger:hover { background: #f1f5f9; }
+
+/* Sidebar close button — hidden on desktop */
+.sidebar-close-btn {
+  display: none;
+  position: absolute;
+  top: 18px;
+  right: 14px;
+  background: #334155;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 6px;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: all 0.15s;
+}
+.sidebar-close-btn:hover { background: #475569; color: #fff; }
+
+/* Backdrop overlay */
+.admin-sidebar-backdrop {
+  display: none;
+}
+
+/* Header left group */
+.admin-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-header-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+/* =============================================
+   TABLET  (max-width: 900px)
+   ============================================= */
+@media (max-width: 900px) {
+  /* Sidebar becomes a slide-in drawer */
+  .admin-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .admin-sidebar.sidebar-open {
+    transform: translateX(0);
+    box-shadow: 8px 0 40px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Show backdrop */
+  .admin-sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.5);
+    z-index: 999;
+    backdrop-filter: blur(2px);
+  }
+
+  /* Show hamburger & close button */
+  .admin-hamburger { display: flex; }
+  .sidebar-close-btn { display: flex; }
+
+  /* Main content takes full width */
+  .main-content { width: 100%; }
+
+  .content-area { padding: 20px 16px; }
+}
+
+/* =============================================
+   MOBILE  (max-width: 640px)
+   ============================================= */
+@media (max-width: 640px) {
+  .admin-header {
+    padding: 0 14px;
+    height: 60px;
+  }
+  .admin-header-title { font-size: 15px; }
+  .admin-header-subtitle { display: none; }
+  .admin-header-user-role { display: none; }
+  .admin-header-user-name { font-size: 12px; }
+
+  .content-area { padding: 14px 10px; }
+
+  .admin-page-wrapper { margin: 14px auto; }
+  .admin-form { padding: 16px 14px; gap: 16px; }
+  .admin-form-row {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .admin-card-header { padding: 16px 14px; }
+  .admin-form-footer {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+  .admin-btn-primary,
+  .admin-btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+}

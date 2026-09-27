@@ -1,13 +1,19 @@
+import { useState, useEffect } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import "../styles/StudentDashboard.css";
 
 const StudentLayout = () => {
   const location = useLocation();
-  const navigate = useNavigate(); // ✅ added
+  const navigate = useNavigate();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const isActive = (path) => location.pathname === path;
 
-  // ✅ logout logic
+  // Close sidebar on navigation
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [location.pathname]);
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
@@ -15,40 +21,63 @@ const StudentLayout = () => {
 
   return (
     <div className="layout-wrapper">
-      <aside className="student-sidebar">
+      {/* Mobile backdrop */}
+      {sidebarOpen && (
+        <div
+          className="student-sidebar-backdrop"
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside className={`student-sidebar ${sidebarOpen ? "sidebar-open" : ""}`}>
+        {/* Mobile close button */}
+        <button
+          className="student-sidebar-close"
+          onClick={() => setSidebarOpen(false)}
+          aria-label="Close menu"
+        >
+          ✕
+        </button>
+
         <div className="logo-container">
           <div className="logo-icon">🎓</div>
           <h2 className="logo-text">EduPortal</h2>
         </div>
 
         <nav className="nav-stack">
-          <NavLink 
-            to="/student" 
-            label="Dashboard" 
-            icon="📊" 
-            active={isActive("/student")} 
+          <NavItemLink
+            to="/student"
+            label="Dashboard"
+            icon="📊"
+            active={isActive("/student")}
           />
-          <NavLink 
-            to="/student/courses" 
-            label="My Courses" 
-            icon="📖" 
-            active={isActive("/student/courses")} 
+          <NavItemLink
+            to="/student/courses"
+            label="My Courses"
+            icon="📖"
+            active={isActive("/student/courses")}
           />
-          <NavLink 
-            to="/student/assignments" 
-            label="Assignments" 
-            icon="✍️" 
-            active={isActive("/student/assignments")} 
+          <NavItemLink
+            to="/student/assignments"
+            label="Assignments"
+            icon="✍️"
+            active={isActive("/student/assignments")}
           />
-          <NavLink 
-            to="/student/profile" 
-            label="My Profile" 
-            icon="👤" 
-            active={isActive("/student/profile")} 
+          <NavItemLink
+            to="/student/messages"
+            label="Messages"
+            icon="💬"
+            active={isActive("/student/messages")}
+          />
+          <NavItemLink
+            to="/student/profile"
+            label="My Profile"
+            icon="👤"
+            active={isActive("/student/profile")}
           />
         </nav>
 
-        {/* ✅ LOGOUT BUTTON */}
         <div className="sidebar-footer">
           <button
             onClick={handleLogout}
@@ -58,7 +87,7 @@ const StudentLayout = () => {
               textAlign: "left",
               background: "none",
               border: "none",
-              cursor: "pointer"
+              cursor: "pointer",
             }}
           >
             <span className="nav-icon">🚪</span>
@@ -73,6 +102,18 @@ const StudentLayout = () => {
       </aside>
 
       <main className="main-content-area">
+        {/* Mobile topbar */}
+        <div className="student-mobile-topbar">
+          <button
+            className="student-hamburger"
+            onClick={() => setSidebarOpen(true)}
+            aria-label="Open menu"
+          >
+            ☰
+          </button>
+          <span className="student-mobile-title">EduPortal</span>
+        </div>
+
         <div className="content-inner">
           <Outlet />
         </div>
@@ -81,11 +122,8 @@ const StudentLayout = () => {
   );
 };
 
-const NavLink = ({ to, label, icon, active }) => (
-  <Link 
-    to={to} 
-    className={`nav-link ${active ? 'active' : ''}`}
-  >
+const NavItemLink = ({ to, label, icon, active }) => (
+  <Link to={to} className={`nav-link ${active ? "active" : ""}`}>
     <span className="nav-icon">{icon}</span>
     {label}
   </Link>

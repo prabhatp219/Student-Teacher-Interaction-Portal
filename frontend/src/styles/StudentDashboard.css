@@ -338,3 +338,112 @@
 .action-btn-secondary:hover {
   background-color: #e2e8f0;
 }
+
+/* =============================================
+   STUDENT LAYOUT — MOBILE RESPONSIVE
+   ============================================= */
+
+/* Mobile topbar — hidden on desktop */
+.student-mobile-topbar {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: #1e293b;
+  border-bottom: 1px solid #334155;
+  flex-shrink: 0;
+}
+
+.student-hamburger {
+  background: none;
+  border: none;
+  color: #f1f5f9;
+  font-size: 22px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+  line-height: 1;
+}
+
+.student-mobile-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #f8fafc;
+  letter-spacing: -0.3px;
+}
+
+/* Sidebar close button — hidden on desktop */
+.student-sidebar-close {
+  display: none;
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: #334155;
+  border: none;
+  color: #f1f5f9;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 6px;
+  width: 30px;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* Backdrop */
+.student-sidebar-backdrop {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .layout-wrapper {
+    flex-direction: column;
+  }
+
+  /* Sidebar becomes a slide-in drawer */
+  .student-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+  }
+
+  .student-sidebar.sidebar-open {
+    transform: translateX(0);
+    box-shadow: 8px 0 40px rgba(0, 0, 0, 0.3);
+  }
+
+  .student-sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.5);
+    z-index: 999;
+    backdrop-filter: blur(2px);
+  }
+
+  .student-sidebar-close {
+    display: flex;
+  }
+
+  /* Show mobile topbar */
+  .student-mobile-topbar {
+    display: flex;
+  }
+
+  .main-content-area {
+    flex: 1;
+    min-height: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .main-content-area {
+    overflow-y: auto;
+  }
+}
