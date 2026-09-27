@@ -7,3 +7,4 @@ frontend/dist/
 *.env
 backend/.env
 frontend/.env
+.worktrees/
