@@ -18,7 +18,12 @@ export const AuthProvider = ({ children }) => {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(res => setUser(res.data))
-    .catch(() => logout())
+    .catch((err) => {
+      // Only wipe session if the server explicitly rejects the token with 401
+      if (err.response && err.response.status === 401) {
+        logout();
+      }
+    })
     .finally(() => setLoading(false));
   }, [token]);
 
