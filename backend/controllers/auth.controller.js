@@ -4,7 +4,7 @@ const { OAuth2Client } = require('google-auth-library');
 const User = require('../models/User');
 const logActivity = require('../utils/logActivity');
 
-const JWT_EXP = '7d'; // adjust as needed
+const JWT_EXP = '30s'; // adjust as needed
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 exports.register = async (req, res) => {
