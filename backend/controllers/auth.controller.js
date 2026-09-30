@@ -10,7 +10,7 @@ const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 exports.register = async (req, res) => {
   try {
     const { name, email, password, role, department, meta } = req.body;
-    if (!name || !email || !password) return res.status(400).json({ msg: 'Missing fields' });
+    if (!name || !email || !password) return res.status(400).json({ msg: 'Missing fields' });  
 
     const existing = await User.findOne({ email });
     if (existing) return res.status(400).json({ msg: 'Email already in use' });
